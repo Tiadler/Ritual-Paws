@@ -340,7 +340,7 @@ export default function Page() {
             <div>
               <h1 className="text-3xl font-bold">Start your Ritual Paws</h1>
               <p className="mt-2 text-sm text-white/60">
-                Ví này chưa có pet. App sẽ tạo mặc định Pet(1) màu đen, sau đó bạn có thể đổi tên, đổi pet, đổi item trong Inventory.
+                This wallet doesn't have a pet yet. The app will create a default black Pet(1), then you can change the name, change the pet, change the item in Inventory.
               </p>
             </div>
 
@@ -367,7 +367,7 @@ export default function Page() {
                 </div>
 
                 <p className="text-sm leading-6 text-white/55">
-                  Không cần chọn tên/màu ở bước đầu. Sau khi tạo pet, bạn vào Inventory để đổi màu Pet, chỉnh item, background và đổi tên hiển thị trong room.
+                  No need to select a name/color at the beginning. After creating the pet, you can go to Inventory to change the pet's color, adjust the item, background, and rename it for display in the room.
                 </p>
               </div>
 
