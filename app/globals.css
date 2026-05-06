@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .card-glow-hover:hover {
+    box-shadow: 0 0 30px rgba(167, 255, 154, 0.55), 0 0 40px rgba(255, 255, 255, 0.16);
+    transform: translateY(-2px);
+  }
+
+  .starfield {
+    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.16), transparent 30%),
+      radial-gradient(circle at 80% 10%, rgba(165,255,179,0.10), transparent 22%),
+      radial-gradient(circle at 10% 80%, rgba(255,255,255,0.10), transparent 20%),
+      linear-gradient(180deg, #040b12 10%, #06121d 60%, #03110f 100%);
+    overflow: hidden;
+  }
+
+  .firefly {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: rgba(179, 255, 187, 0.95);
+    box-shadow: 0 0 12px rgba(179, 255, 187, 0.9), 0 0 20px rgba(255, 255, 255, 0.25);
+    opacity: 0.8;
+    animation: floatUp 5s ease-in infinite;
+  }
+
+  .firefly:nth-child(2) { animation-delay: 0.9s; left: 18%; width: 5px; height: 5px; }
+  .firefly:nth-child(3) { animation-delay: 1.8s; left: 45%; width: 7px; height: 7px; }
+  .firefly:nth-child(4) { animation-delay: 1.2s; left: 74%; width: 4px; height: 4px; }
+  .firefly:nth-child(5) { animation-delay: 2.5s; left: 55%; width: 5px; height: 5px; }
+  .firefly:nth-child(6) { animation-delay: 3.3s; left: 30%; width: 4px; height: 4px; }
+
+  @keyframes floatUp {
+    0% { transform: translateY(25px) scale(0.75); opacity: 0; }
+    10% { opacity: 0.9; }
+    50% { transform: translateY(-120px) scale(1.1); opacity: 1; }
+    100% { transform: translateY(-220px) scale(0.9); opacity: 0; }
+  }
+}
+
+:root {
+  --primary: #FF6B9D;
+  --secondary: #00E5C4;
+  --accent: #FFD700;
+}
+
+body {
+  background: #0F0F1A;
+}
+
+/* Pet Animation */
+.pet-container {
+  transition: transform 0.2s ease;
+}
+
+.pet-container:hover {
+  transform: scale(1.02);
+}
+
+/* Chat Bubbles */
+.chat-bubble-user {
+  background: #FF6B9D;
+  color: white;
+  border-radius: 18px 18px 4px 18px;
+}
+
+.chat-bubble-pet {
+  background: #1A1A2E;
+  border: 1px solid rgba(0, 229, 196, 0.3);
+  border-radius: 18px 18px 18px 4px;
+}
+
+/* Room */
+.room {
+  background: linear-gradient(145deg, #1A1A2E 0%, #16213E 100%);
+  border: 2px solid rgba(255, 107, 157, 0.2);
+  box-shadow: 0 0 40px rgba(255, 107, 157, 0.1);
+}
+
+.furniture {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: grab;
+}
+
+.furniture:hover {
+  transform: scale(1.1);
+  box-shadow: 0 10px 30px rgba(0, 229, 196, 0.3);
+}
+
+.furniture:active {
+  cursor: grabbing;
+}
+
+/* Status Bar */
+.status-bar {
+  height: 8px;
+  background: #1A1A2E;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.status-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+/* Shop Card */
+.shop-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.shop-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}

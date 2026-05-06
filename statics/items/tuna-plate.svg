@@ -1,0 +1,27 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="plateGradient" cx="0.5" cy="0.5" r="0.8">
+      <stop offset="0%" style="stop-color:#FFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F5F5F5;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+
+  <!-- Plate -->
+  <circle cx="100" cy="140" r="60" fill="url(#plateGradient)" stroke="#DDD" stroke-width="2"/>
+  <circle cx="100" cy="140" r="55" fill="none" stroke="#EEE" stroke-width="1"/>
+
+  <!-- Tuna chunks -->
+  <ellipse cx="85" cy="125" rx="15" ry="10" fill="#FF6347" transform="rotate(-15 85 125)"/>
+  <ellipse cx="115" cy="130" rx="12" ry="8" fill="#FF4500" transform="rotate(20 115 130)"/>
+  <ellipse cx="95" cy="145" rx="18" ry="12" fill="#FF6347" transform="rotate(-5 95 145)"/>
+  <ellipse cx="110" cy="155" rx="10" ry="7" fill="#FF4500" transform="rotate(35 110 155)"/>
+
+  <!-- Tuna texture -->
+  <path d="M 80 120 Q 85 115 90 120 Q 85 125 80 125 Z" fill="#8B0000"/>
+  <path d="M 110 135 Q 115 130 120 135 Q 115 140 110 140 Z" fill="#8B0000"/>
+  <path d="M 90 150 Q 95 145 100 150 Q 95 155 90 155 Z" fill="#8B0000"/>
+
+  <!-- Sauce drips -->
+  <path d="M 75 135 Q 70 145 75 150" stroke="#FF6347" stroke-width="3" fill="none"/>
+  <path d="M 125 140 Q 130 150 125 155" stroke="#FF4500" stroke-width="2" fill="none"/>
+</svg>

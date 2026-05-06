@@ -1,0 +1,11 @@
+<svg width="80" height="60" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Chair -->
+  <rect x="20" y="30" width="40" height="25" fill="#8B4513"/>
+  <!-- Back -->
+  <rect x="25" y="10" width="30" height="20" fill="#A0522D"/>
+  <!-- Legs -->
+  <rect x="25" y="55" width="3" height="5" fill="#654321"/>
+  <rect x="52" y="55" width="3" height="5" fill="#654321"/>
+  <rect x="25" y="30" width="3" height="5" fill="#654321"/>
+  <rect x="52" y="30" width="3" height="5" fill="#654321"/>
+</svg>

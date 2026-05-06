@@ -1,0 +1,27 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="hatGradient" cx="0.5" cy="0.3" r="0.8">
+      <stop offset="0%" style="stop-color:#FF6B9D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF1493;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+
+  <!-- Hat base -->
+  <ellipse cx="100" cy="120" rx="60" ry="25" fill="url(#hatGradient)"/>
+  <rect x="40" y="95" width="120" height="25" fill="url(#hatGradient)"/>
+
+  <!-- Hat top -->
+  <ellipse cx="100" cy="85" rx="50" ry="20" fill="url(#hatGradient)"/>
+  <ellipse cx="100" cy="75" rx="40" ry="15" fill="url(#hatGradient)"/>
+
+  <!-- Hat decorations -->
+  <circle cx="80" cy="80" r="8" fill="#FFD700"/>
+  <circle cx="100" cy="70" r="6" fill="#FFD700"/>
+  <circle cx="120" cy="80" r="8" fill="#FFD700"/>
+  <circle cx="90" cy="85" r="5" fill="#FFD700"/>
+  <circle cx="110" cy="85" r="5" fill="#FFD700"/>
+
+  <!-- Feather -->
+  <path d="M 140 70 Q 160 50 170 70 Q 165 80 155 75 Q 145 85 140 75" fill="#FF4500"/>
+  <path d="M 145 65 Q 155 45 165 65 Q 160 75 150 70 Q 140 80 145 70" fill="#FF6347"/>
+</svg>

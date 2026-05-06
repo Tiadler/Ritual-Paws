@@ -1,0 +1,10 @@
+<svg width="60" height="40" viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Pants -->
+  <path d="M15 5 L25 5 L20 35 L10 35 Z" fill="#4169E1"/>
+  <path d="M35 5 L45 5 L40 35 L30 35 Z" fill="#4169E1"/>
+  <!-- Belt -->
+  <rect x="10" y="5" width="40" height="3" fill="#8B4513"/>
+  <!-- Pockets -->
+  <rect x="12" y="15" width="6" height="8" fill="#000080"/>
+  <rect x="32" y="15" width="6" height="8" fill="#000080"/>
+</svg>
