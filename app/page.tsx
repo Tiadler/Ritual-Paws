@@ -89,6 +89,14 @@ function saveAppearance(address: string, appearance: SavedPetAppearance) {
   )
 }
 
+function CreatedByTiadler() {
+  return (
+    <div className="pointer-events-none fixed bottom-4 right-5 z-[999] rounded-full border border-white/10 bg-black/25 px-4 py-2 text-xs font-medium tracking-wide text-white/60 shadow-lg backdrop-blur-md">
+      Created by Tiadler
+    </div>
+  )
+}
+
 export default function Page() {
   const [showChat, setShowChat] = useState(false)
   const [showInventory, setShowInventory] = useState(false)
@@ -102,13 +110,11 @@ export default function Page() {
   const [loadingPet, setLoadingPet] = useState(false)
   const [busyAction, setBusyAction] = useState('')
 
-  // Inventory / appearance local state
   const [equippedRoomItems, setEquippedRoomItems] = useState<EquippedRoomItem[]>([])
   const [selectedRoomBackground, setSelectedRoomBackground] = useState<string | undefined>()
   const [displayPetColor, setDisplayPetColor] = useState<string | undefined>()
   const [displayPetName, setDisplayPetName] = useState<string | undefined>()
 
-  // Edit display pet name
   const [draftPetName, setDraftPetName] = useState('')
   const [isEditingPetName, setIsEditingPetName] = useState(false)
 
@@ -282,6 +288,8 @@ export default function Page() {
   if (!isConnected) {
     return (
       <div className="min-h-screen bg-[#0F0F1A] text-white">
+        <CreatedByTiadler />
+
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,107,157,0.18),transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(0,229,196,0.14),transparent_30%)]" />
 
@@ -335,12 +343,14 @@ export default function Page() {
   if (!pet) {
     return (
       <div className="min-h-screen bg-[#0F0F1A] text-white">
+        <CreatedByTiadler />
+
         <div className="max-w-5xl mx-auto px-6 py-10">
           <div className="mb-8 flex items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold">Start your Ritual Paws</h1>
               <p className="mt-2 text-sm text-white/60">
-                This wallet doesn't have a pet yet. The app will create a default black Pet(1), then you can change the name, change the pet, change the item in Inventory.
+                This wallet doesn't have a pet yet. The app will create a default Pet(1) in black, and then you can change its name, pet type, and items in the Inventory.
               </p>
             </div>
 
@@ -367,7 +377,7 @@ export default function Page() {
                 </div>
 
                 <p className="text-sm leading-6 text-white/55">
-                  No need to select a name/color at the beginning. After creating the pet, you can go to Inventory to change the pet's color, adjust the item, background, and rename it for display in the room.
+                  You don't need to choose a name/color at the beginning. After creating the pet, go to Inventory to change the pet's color, adjust items, background, and change its display name in the room.
                 </p>
               </div>
 
@@ -417,6 +427,8 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-[#0F0F1A] text-white">
+      <CreatedByTiadler />
+
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-8">
           <div>
@@ -467,20 +479,9 @@ export default function Page() {
                 </div>
 
                 <div className="mt-1 flex items-center gap-2 text-sm text-white/60">
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#00E5C4]/20 text-[#00E5C4] text-xs font-medium capitalize">
-                    {activePetColor}
-                  </span>
-
                   <span>Level {pet.level}</span>
                   <span>•</span>
                   <span>{Number(pet.totalExp)} total EXP</span>
-
-                  {displayPetColor && displayPetColor !== pet.color ? (
-                    <>
-                      <span>•</span>
-                      <span className="text-[#FFD700]">display changed</span>
-                    </>
-                  ) : null}
 
                   {displayPetName && displayPetName !== pet.name ? (
                     <>
