@@ -195,7 +195,7 @@ export default function Page() {
       const balance = await getWalletBalance(address || walletAddress)
       setRitualBalance(balance)
     } catch (error: any) {
-      alert(error?.shortMessage || error?.message || 'Không đọc được pet on-chain.')
+      // alert(error?.shortMessage || error?.message || 'Không đọc được pet on-chain.')
     } finally {
       setLoadingPet(false)
     }
@@ -279,7 +279,7 @@ export default function Page() {
       await tx.wait()
       await refreshPet(address)
     } catch (error: any) {
-      alert(error?.shortMessage || error?.reason || error?.message || 'Action thất bại.')
+      // alert(error?.shortMessage || error?.reason || error?.message || 'Action thất bại.')
     } finally {
       setBusyAction('')
     }
