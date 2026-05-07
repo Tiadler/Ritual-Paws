@@ -12,6 +12,7 @@
     "deploy:ritual": "hardhat run scripts/deploy.cjs --network ritual"
   },
   "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2",
     "ethers": "^6.13.2",
     "framer-motion": "^11.2.10",
     "html-to-image": "^1.11.13",
