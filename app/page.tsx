@@ -18,9 +18,12 @@ import {
   RitualTomPet,
 } from '@/lib/ritualTom'
 import { getPetArtByColor, imageFallback } from '@/lib/staticAssets'
+import { CardMarquee } from '@/components/CardMarquee'
 
 const DEFAULT_PET_NAME = 'Your Pet'
 const DEFAULT_PET_COLOR = 'black'
+const CONNECT_BACKGROUND_SRC = '/static/bg/bg.png'
+const CONNECT_PET_PREVIEW_SRC = '/static/mascot/Pet(7).png'
 
 type SavedPetAppearance = {
   equippedRoomItems: EquippedRoomItem[]
@@ -287,33 +290,42 @@ export default function Page() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-[#0F0F1A] text-white">
+      <div className="relative min-h-screen overflow-hidden bg-[#0F0F1A] text-white">
         <CreatedByTiadler />
 
-        <div className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,107,157,0.18),transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(0,229,196,0.14),transparent_30%)]" />
+        <img
+          src={CONNECT_BACKGROUND_SRC}
+          alt="Ritual Paws background"
+          className="absolute inset-0 h-full w-full object-cover opacity-70"
+          draggable={false}
+        />
 
-          <div className="relative z-10 max-w-6xl mx-auto px-6 py-24 lg:py-32">
+        <div className="absolute inset-0 bg-black/45" />
+
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,107,157,0.20),transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(0,229,196,0.18),transparent_30%),linear-gradient(180deg,rgba(15,15,26,0.08)_0%,rgba(15,15,26,0.72)_100%)]" />
+
+        <div className="relative z-10">
+          <div className="max-w-6xl mx-auto px-6 py-24 lg:py-32">
             <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] items-center">
               <div className="space-y-8">
-                <div className="inline-flex items-center gap-3 rounded-full bg-white/10 px-4 py-2 text-sm text-white/80">
+                <div className="inline-flex items-center gap-3 rounded-full bg-black/30 px-4 py-2 text-sm text-white/85 shadow-lg backdrop-blur-md">
                   <span className="text-[#00E5C4]">MVP On-chain</span>
                   <span>1 wallet = 1 pet</span>
                 </div>
 
                 <div>
-                  <h1 className="text-5xl sm:text-6xl font-bold tracking-tight">
+                  <h1 className="text-5xl sm:text-6xl font-bold tracking-tight drop-shadow-[0_0_22px_rgba(0,0,0,0.55)]">
                     Ritual Paws
                   </h1>
 
-                  <p className="mt-4 max-w-xl text-lg text-white/70">
+                  <p className="mt-4 max-w-xl text-lg text-white/75">
                     Customize, raise, and share your on-chain companion.
                   </p>
                 </div>
 
                 <ConnectWalletButton onConnect={handleConnect} />
 
-                <p className="text-sm text-white/60">
+                <p className="text-sm text-white/65">
                   Connect your wallet on Ritual Chain. Your wallet address is your user account.
                 </p>
               </div>
@@ -321,19 +333,41 @@ export default function Page() {
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="rounded-[2rem] border border-white/10 bg-[#11111F]/80 p-10 shadow-[0_40px_120px_-40px_rgba(255,107,157,0.7)]"
+                className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#11111F]/68 p-8 shadow-[0_40px_120px_-40px_rgba(255,107,157,0.7)] backdrop-blur-md sm:p-10"
               >
-                <div className="text-6xl">🐾✨</div>
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_30%,rgba(0,229,196,0.12),transparent_34%),radial-gradient(circle_at_86%_75%,rgba(255,215,0,0.08),transparent_32%)]" />
 
-                <div className="mt-6 text-xl font-semibold">
-                  Your first Ritual Paw is waiting.
-                </div>
+                <div className="relative z-10 grid grid-cols-1 gap-7 sm:grid-cols-[1fr_2fr] sm:items-center">
+                  <div className="flex items-center justify-center">
+                    <img
+                      src={CONNECT_PET_PREVIEW_SRC}
+                      alt="Ritual Paws pet preview"
+                      onError={(event) => imageFallback(event, previewPetArt.fallbackSrc)}
+                      className="h-[180px] w-full object-contain drop-shadow-[0_0_34px_rgba(0,229,196,0.25)] sm:h-[210px]"
+                      draggable={false}
+                    />
+                  </div>
 
-                <div className="mt-3 text-sm text-white/60">
-                  Create one default pet first. You can rename, recolor, and style it after entering the room.
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold uppercase tracking-[0.25em] text-[#00E5C4]">
+                      Companion ready
+                    </div>
+
+                    <div className="mt-3 text-2xl font-bold leading-tight text-white">
+                      Your first Ritual Paw is waiting.
+                    </div>
+
+                    <div className="mt-3 text-sm leading-6 text-white/65">
+                      Start with a default pet, then rename, recolor, customize the room, equip items, generate a card, and mint your favorite moment as an NFT.
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             </div>
+          </div>
+
+          <div className="relative z-10 mx-auto mt-2 max-w-[92rem] px-6 pb-16 lg:pb-20">
+            <CardMarquee />
           </div>
         </div>
       </div>
