@@ -30,7 +30,7 @@ function cleanReply(text: string) {
     .replace(/\[doc_\d+\]/g, '')
     .replace(/##\s*📚?\s*References[\s\S]*/i, '')
     .replace(/References[\s\S]*/i, '')
-    .replace(/(?:[\p{Extended_Pictographic}\uFE0F]){4,}/gu, '')
+    .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '')
     .replace(/[ \t]+\n/g, '\n')
     .replace(/\n{3,}/g, '\n\n')
     .trim()
