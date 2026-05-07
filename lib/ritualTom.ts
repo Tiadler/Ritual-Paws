@@ -51,14 +51,14 @@ export type RitualTomPet = {
 type RawPet = {
   name: string
   color: string
-  totalExp: bigint
-  hunger: number
-  happiness: number
-  energy: number
-  cleanliness: number
-  adoptedAt: bigint
-  updatedAt: bigint
-  adopted: boolean
+  totalExp?: bigint
+  hunger?: number
+  happiness?: number
+  energy?: number
+  cleanliness?: number
+  adoptedAt?: bigint
+  updatedAt?: bigint
+  adopted?: boolean
 }
 
 function getSelectedInjectedProvider(): InjectedProvider {
@@ -138,7 +138,12 @@ export async function getRitualTomContract(forceWalletSelection = false) {
   }
 }
 
-function normalizePet(rawPet: RawPet, level: bigint, expInLevel: bigint, expToNextLevel: bigint): RitualTomPet {
+function normalizePet(
+  rawPet: RawPet,
+  level?: bigint,
+  expInLevel?: bigint,
+  expToNextLevel?: bigint
+): RitualTomPet {
   const hunger = Number(rawPet.hunger ?? 0)
   const happiness = Number(rawPet.happiness ?? 0)
   const energy = Number(rawPet.energy ?? 0)
@@ -147,7 +152,7 @@ function normalizePet(rawPet: RawPet, level: bigint, expInLevel: bigint, expToNe
   return {
     name: rawPet.name,
     color: rawPet.color,
-    totalExp: Number(rawPet.totalExp ?? 0n),
+    totalExp: Number(rawPet.totalExp ?? BigInt(0)),
 
     hunger,
     happiness,
@@ -159,13 +164,13 @@ function normalizePet(rawPet: RawPet, level: bigint, expInLevel: bigint, expToNe
     sleep: energy,
     clean: cleanliness,
 
-    adoptedAt: Number(rawPet.adoptedAt ?? 0n),
-    updatedAt: Number(rawPet.updatedAt ?? 0n),
+    adoptedAt: Number(rawPet.adoptedAt ?? BigInt(0)),
+    updatedAt: Number(rawPet.updatedAt ?? BigInt(0)),
     adopted: Boolean(rawPet.adopted),
 
-    level: Number(level ?? 1n),
-    expInLevel: Number(expInLevel ?? 0n),
-    expToNextLevel: Number(expToNextLevel ?? 100n),
+    level: Number(level ?? BigInt(1)),
+    expInLevel: Number(expInLevel ?? BigInt(0)),
+    expToNextLevel: Number(expToNextLevel ?? BigInt(100)),
   }
 }
 
