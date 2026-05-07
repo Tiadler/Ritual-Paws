@@ -182,7 +182,6 @@ export default function Page() {
       const balance = await getWalletBalance(address || walletAddress)
       setRitualBalance(balance)
     } catch (error: any) {
-      alert(error?.shortMessage || error?.message || 'Could not read pet on-chain.')
     } finally {
       setLoadingPet(false)
     }
@@ -196,7 +195,7 @@ export default function Page() {
 
       await refreshPet(address)
     } catch (error: any) {
-      alert(error?.shortMessage || error?.reason || error?.message || 'Sync on-chain failed.')
+      
     } finally {
       setLoadingPet(false)
     }
@@ -233,7 +232,7 @@ export default function Page() {
       await refreshPet(address)
       applySavedAppearance(address)
     } catch (error: any) {
-      alert(error?.shortMessage || error?.reason || error?.message || 'Create pet failed.')
+      
     } finally {
       setBusyAction('')
     }
@@ -280,7 +279,7 @@ export default function Page() {
       await tx.wait()
       await refreshPet(address)
     } catch (error: any) {
-      alert(error?.shortMessage || error?.reason || error?.message || 'Action failed.')
+      
     } finally {
       setBusyAction('')
     }
