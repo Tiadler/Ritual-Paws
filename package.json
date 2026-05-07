@@ -9,7 +9,8 @@
     "lint": "next lint",
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "deploy:ritual": "hardhat run scripts/deploy.cjs --network ritual"
+    "deploy:ritual": "hardhat run scripts/deploy.cjs --network ritual",
+    "withdraw:ritual": "hardhat run scripts/withdraw.cjs --network ritual"
   },
   "dependencies": {
     "ethers": "^6.13.2",
