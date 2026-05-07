@@ -1,66 +1,28 @@
-import { BrowserProvider, Contract } from 'ethers'
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
 
-const RITUAL_PAWS_CARD_NFT_ADDRESS =
-  process.env.NEXT_PUBLIC_RITUAL_PAWS_CARD_NFT_ADDRESS
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-const RITUAL_PAWS_CARD_NFT_ABI = [
-  'function mintCard(string tokenURI) external returns (uint256)',
-] as const
+contract RitualPawsCardNFT is ERC721URIStorage, Ownable {
+    uint256 public nextTokenId;
 
-type InjectedProvider = {
-  request: (args: { method: string; params?: any[] }) => Promise<any>
-  on?: (event: string, callback: (...args: any[]) => void) => void
-  removeListener?: (event: string, callback: (...args: any[]) => void) => void
-}
+    event CardMinted(
+        address indexed minter,
+        uint256 indexed tokenId,
+        string tokenURI
+    );
 
-function getInjectedProvider(): InjectedProvider {
-  if (typeof window === 'undefined') {
-    throw new Error('Wallet is only available in the browser.')
-  }
+    constructor() ERC721("Ritual Paws Card", "RPAWS") Ownable(msg.sender) {}
 
-  const anyWindow = window as any
-  const selectedWallet = window.localStorage.getItem('ritualpaws-wallet')
+    function mintCard(string calldata tokenURI) external returns (uint256) {
+        uint256 tokenId = ++nextTokenId;
 
-  if (selectedWallet === 'okx' && anyWindow.okxwallet) {
-    return anyWindow.okxwallet
-  }
+        _safeMint(msg.sender, tokenId);
+        _setTokenURI(tokenId, tokenURI);
 
-  if (selectedWallet === 'metamask' && anyWindow.ethereum) {
-    return anyWindow.ethereum
-  }
+        emit CardMinted(msg.sender, tokenId, tokenURI);
 
-  const provider = anyWindow.ethereum || anyWindow.okxwallet
-
-  if (!provider) {
-    throw new Error('No wallet provider found. Please connect MetaMask or OKX Wallet first.')
-  }
-
-  return provider
-}
-
-export async function mintRitualPawsCard(tokenURI: string) {
-  if (!RITUAL_PAWS_CARD_NFT_ADDRESS) {
-    throw new Error('Missing NEXT_PUBLIC_RITUAL_PAWS_CARD_NFT_ADDRESS in environment variables.')
-  }
-
-  if (!tokenURI) {
-    throw new Error('Missing tokenURI for NFT mint.')
-  }
-
-  const injectedProvider = getInjectedProvider()
-  const browserProvider = new BrowserProvider(injectedProvider as any)
-  const signer = await browserProvider.getSigner()
-
-  const contract = new Contract(
-    RITUAL_PAWS_CARD_NFT_ADDRESS,
-    RITUAL_PAWS_CARD_NFT_ABI,
-    signer
-  )
-
-  const tx = await contract.mintCard(tokenURI)
-  const receipt = await tx.wait()
-
-  return {
-    txHash: receipt?.hash || tx.hash,
-  }
+        return tokenId;
+    }
 }

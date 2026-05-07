@@ -14,26 +14,13 @@ import {
   getRitualTomContract,
   getWalletBalance,
   readMyPet,
+  syncPetOnChain,
   RitualTomPet,
-  shortAddress,
 } from '@/lib/ritualTom'
 import { getPetArtByColor, imageFallback } from '@/lib/staticAssets'
 
 const DEFAULT_PET_NAME = 'Your Pet'
 const DEFAULT_PET_COLOR = 'black'
-
-const CAT_COLORS = [
-  { id: 'black', label: 'Midnight Black', ring: 'from-slate-950 to-slate-700', emoji: '🐈‍⬛', petIndex: 1 },
-  { id: 'white', label: 'Snow White', ring: 'from-white to-slate-200', emoji: '🐱', petIndex: 2 },
-  { id: 'cream', label: 'Cream Vanilla', ring: 'from-amber-100 to-orange-200', emoji: '🐈', petIndex: 3 },
-  { id: 'orange', label: 'Orange Tabby', ring: 'from-orange-300 to-orange-600', emoji: '🐱', petIndex: 4 },
-  { id: 'gray', label: 'Silver Gray', ring: 'from-slate-300 to-slate-600', emoji: '😺', petIndex: 5 },
-  { id: 'brown', label: 'Mocha Brown', ring: 'from-amber-700 to-yellow-900', emoji: '🐈', petIndex: 6 },
-  { id: 'pink', label: 'Rose Pink', ring: 'from-pink-200 to-pink-500', emoji: '😽', petIndex: 7 },
-  { id: 'blue', label: 'Sky Blue', ring: 'from-sky-200 to-blue-500', emoji: '🐱', petIndex: 8 },
-  { id: 'purple', label: 'Magic Purple', ring: 'from-violet-300 to-purple-700', emoji: '🐱', petIndex: 9 },
-  { id: 'green', label: 'Mint Green', ring: 'from-emerald-200 to-green-600', emoji: '🐱', petIndex: 10 },
-]
 
 type SavedPetAppearance = {
   equippedRoomItems: EquippedRoomItem[]
@@ -195,7 +182,21 @@ export default function Page() {
       const balance = await getWalletBalance(address || walletAddress)
       setRitualBalance(balance)
     } catch (error: any) {
-      // alert(error?.shortMessage || error?.message || 'Không đọc được pet on-chain.')
+      alert(error?.shortMessage || error?.message || 'Could not read pet on-chain.')
+    } finally {
+      setLoadingPet(false)
+    }
+  }
+
+  const handleSyncOnChain = async () => {
+    try {
+      setLoadingPet(true)
+
+      const { address } = await syncPetOnChain()
+
+      await refreshPet(address)
+    } catch (error: any) {
+      alert(error?.shortMessage || error?.reason || error?.message || 'Sync on-chain failed.')
     } finally {
       setLoadingPet(false)
     }
@@ -232,7 +233,7 @@ export default function Page() {
       await refreshPet(address)
       applySavedAppearance(address)
     } catch (error: any) {
-      alert(error?.shortMessage || error?.reason || error?.message || 'Create pet thất bại.')
+      alert(error?.shortMessage || error?.reason || error?.message || 'Create pet failed.')
     } finally {
       setBusyAction('')
     }
@@ -279,7 +280,7 @@ export default function Page() {
       await tx.wait()
       await refreshPet(address)
     } catch (error: any) {
-      // alert(error?.shortMessage || error?.reason || error?.message || 'Action thất bại.')
+      alert(error?.shortMessage || error?.reason || error?.message || 'Action failed.')
     } finally {
       setBusyAction('')
     }
@@ -314,7 +315,7 @@ export default function Page() {
                 <ConnectWalletButton onConnect={handleConnect} />
 
                 <p className="text-sm text-white/60">
-                  Connect MetaMask on Ritual Chain. Your wallet address is your user account.
+                  Connect your wallet on Ritual Chain. Your wallet address is your user account.
                 </p>
               </div>
 
@@ -350,7 +351,7 @@ export default function Page() {
             <div>
               <h1 className="text-3xl font-bold">Start your Ritual Paws</h1>
               <p className="mt-2 text-sm text-white/60">
-                This wallet doesn't have a pet yet. The app will create a default Pet(1) in black, and then you can change its name, pet type, and items in the Inventory.
+                This wallet does not have a pet yet. The app will create default Pet(1), then you can customize it in Inventory.
               </p>
             </div>
 
@@ -377,7 +378,7 @@ export default function Page() {
                 </div>
 
                 <p className="text-sm leading-6 text-white/55">
-                  You don't need to choose a name/color at the beginning. After creating the pet, go to Inventory to change the pet's color, adjust items, background, and change its display name in the room.
+                  No need to choose name/color at the first step. After creating the pet, use Inventory to customize pet, items, background, and display name.
                 </p>
               </div>
 
@@ -386,7 +387,7 @@ export default function Page() {
                 disabled={busyAction === 'adopt'}
                 className="mt-7 w-full rounded-2xl bg-gradient-to-r from-[#00E5C4] to-[#FFD700] px-6 py-4 font-bold text-[#0F172A] transition hover:brightness-110 disabled:opacity-60"
               >
-                {busyAction === 'adopt' ? 'Confirming in MetaMask...' : 'Create Default Pet'}
+                {busyAction === 'adopt' ? 'Confirming in wallet...' : 'Create Default Pet'}
               </button>
             </div>
 
@@ -496,8 +497,9 @@ export default function Page() {
 
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <button
-              onClick={() => refreshPet(walletAddress)}
-              className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80 transition hover:bg-white/10"
+              onClick={handleSyncOnChain}
+              disabled={loadingPet}
+              className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80 transition hover:bg-white/10 disabled:opacity-60"
             >
               {loadingPet ? 'Syncing...' : 'Sync On-chain'}
             </button>
@@ -544,8 +546,7 @@ export default function Page() {
               />
 
               <p className="mt-3 text-xs text-white/45">
-                Each turn costs 0.0015 RITUAL. EXP is added based on the percentage of actual recovery:
-                20% recovery = +20 EXP.
+                Each action costs 0.0015 RITUAL. Linear decay: stats lose 10 points per hour.
               </p>
             </div>
 
