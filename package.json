@@ -9,8 +9,7 @@
     "lint": "next lint",
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "deploy:ritual": "hardhat run scripts/deploy.cjs --network ritual",
-    "withdraw:ritual": "hardhat run scripts/withdraw.cjs --network ritual"
+    "deploy:ritual": "hardhat run scripts/deploy.cjs --network ritual"
   },
   "dependencies": {
     "ethers": "^6.13.2",
@@ -18,6 +17,7 @@
     "html-to-image": "^1.11.13",
     "html2canvas": "^1.4.1",
     "next": "14.2.3",
+    "openai": "^6.36.0",
     "react": "^18",
     "react-dom": "^18"
   },

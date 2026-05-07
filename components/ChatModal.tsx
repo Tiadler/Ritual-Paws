@@ -7,51 +7,103 @@ interface ChatModalProps {
   onClose: () => void
   petLevel: string
   mood: 'happy' | 'normal' | 'sad'
+  petStats?: {
+    hunger?: number
+    happiness?: number
+    energy?: number
+    cleanliness?: number
+  }
+  petName?: string
 }
 
-export function ChatModal({ onClose, petLevel, mood }: ChatModalProps) {
-  const [messages, setMessages] = useState([
-    { from: 'pet', text: "Hey! What's up? Want to chat with me? 😸" }
+type ChatMessage = {
+  role: 'user' | 'assistant'
+  content: string
+}
+
+export function ChatModal({ onClose, petLevel, mood, petStats, petName }: ChatModalProps) {
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { role: 'assistant', content: "Hey! I'm here. Want to chat with me? 😸" },
   ])
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
 
-  const sendMessage = () => {
-    if (!input.trim()) return
+  const sendMessage = async () => {
+    const text = input.trim()
+    if (!text || isTyping) return
 
-    setMessages([...messages, { from: 'user', text: input }])
-    const userMessage = input
+    const userMessage: ChatMessage = { role: 'user', content: text }
+    const nextMessages = [...messages, userMessage]
+
+    setMessages(nextMessages)
     setInput('')
     setIsTyping(true)
 
-    setTimeout(() => {
-      let reply = ''
-      
-      if (userMessage.toLowerCase().includes('hungry') || userMessage.toLowerCase().includes('eat')) {
-        reply = "I want tuna! 🐟 Meow! 😸"
-      } else if (userMessage.toLowerCase().includes('play')) {
-        reply = "Yes! Let's play together! 🎮"
-      } else if (userMessage.toLowerCase().includes('sleep')) {
-        reply = "I'm tired... need a nap 😴"
-      } else {
-        reply = "That's cool! I like hanging out with you 😸"
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: nextMessages,
+          petContext: {
+            petLevel,
+            mood,
+            name: petName || 'Ritual Paws pet',
+            hunger: petStats?.hunger,
+            happiness: petStats?.happiness,
+            energy: petStats?.energy,
+            cleanliness: petStats?.cleanliness,
+          },
+        }),
+      })
+
+      const rawText = await res.text()
+      let data: any = {}
+
+      try {
+        data = JSON.parse(rawText)
+      } catch {
+        data = { error: rawText }
       }
 
-      setMessages(prev => [...prev, { from: 'pet', text: reply }])
+      if (!res.ok) {
+        throw new Error(data.error || rawText || 'Chat API failed')
+      }
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: data.content || 'Meow... I am thinking about that.',
+        },
+      ])
+    } catch (error) {
+      console.error('Pet chat failed:', error)
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content:
+            error instanceof Error
+              ? `Chat API error: ${error.message}`
+              : 'Chat API error.',
+        },
+      ])
+    } finally {
       setIsTyping(false)
-    }, 850)
+    }
   }
 
   return (
     <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[100] p-4" onClick={onClose}>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-[#1A1A2E] w-full max-w-[520px] rounded-3xl overflow-hidden border border-white/10 flex flex-col h-[620px]"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="px-6 py-4 border-b border-white/10 flex items-center gap-4">
-          <div className="text-4xl"></div>
+          <div className="text-4xl">🐾</div>
           <div className="flex-1">
             <div className="font-semibold">Ritual Paws • {petLevel}</div>
             <div className="text-xs text-[#00E5C4]">● Online • Mood: {mood}</div>
@@ -61,13 +113,13 @@ export function ChatModal({ onClose, petLevel, mood }: ChatModalProps) {
 
         <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#11111F]">
           {messages.map((msg, index) => (
-            <div key={index} className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] px-4 py-3 text-sm ${msg.from === 'user' ? 'chat-bubble-user' : 'chat-bubble-pet'}`}>
-                {msg.text}
+            <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[80%] px-4 py-3 text-sm whitespace-pre-wrap ${msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-pet'}`}>
+                {msg.content}
               </div>
             </div>
           ))}
-          
+
           {isTyping && (
             <div className="flex items-center gap-2 text-white/60 text-sm pl-1">
               <div className="flex gap-1">
@@ -89,9 +141,10 @@ export function ChatModal({ onClose, petLevel, mood }: ChatModalProps) {
             placeholder="Type a message to your pet..."
             className="flex-1 bg-[#11111F] border border-white/20 rounded-2xl px-5 py-3 text-sm focus:outline-none focus:border-[#FF6B9D]"
           />
-          <button 
+          <button
             onClick={sendMessage}
-            className="px-6 bg-[#FF6B9D] rounded-2xl font-medium active:scale-95 transition-all"
+            disabled={isTyping || !input.trim()}
+            className="px-6 bg-[#FF6B9D] rounded-2xl font-medium active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Send
           </button>
