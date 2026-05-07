@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { motion } from 'framer-motion'
 
 interface ChatModalProps {
@@ -19,6 +19,34 @@ interface ChatModalProps {
 type ChatMessage = {
   role: 'user' | 'assistant'
   content: string
+}
+
+function renderFormattedMessage(content: string) {
+  // Supports:
+  // **bold text**  -> <strong>
+  // *italic text*  -> <em>
+  // Bold is matched before italic so **...** is not split as two italic markers.
+  const parts = content.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g)
+
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
+      return (
+        <strong key={index} className="font-bold text-white">
+          {part.slice(2, -2)}
+        </strong>
+      )
+    }
+
+    if (part.startsWith('*') && part.endsWith('*') && part.length > 2) {
+      return (
+        <em key={index} className="italic text-white/90">
+          {part.slice(1, -1)}
+        </em>
+      )
+    }
+
+    return <Fragment key={index}>{part}</Fragment>
+  })
 }
 
 export function ChatModal({ onClose, petLevel, mood, petStats, petName }: ChatModalProps) {
@@ -115,7 +143,7 @@ export function ChatModal({ onClose, petLevel, mood, petStats, petName }: ChatMo
           {messages.map((msg, index) => (
             <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[80%] px-4 py-3 text-sm whitespace-pre-wrap ${msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-pet'}`}>
-                {msg.content}
+                {renderFormattedMessage(msg.content)}
               </div>
             </div>
           ))}
