@@ -4,6 +4,21 @@ export const ACTION_PRICE = parseEther('0.0015')
 
 const RITUAL_TOM_ADDRESS = process.env.NEXT_PUBLIC_RITUALTOM_ADDRESS
 
+export const RITUAL_CHAIN_ID_DECIMAL = 1979
+export const RITUAL_CHAIN_ID_HEX = '0x7bb'
+
+export const RITUAL_CHAIN_PARAMS = {
+  chainId: RITUAL_CHAIN_ID_HEX,
+  chainName: 'Ritual Chain Testnet',
+  nativeCurrency: {
+    name: 'RITUAL',
+    symbol: 'RITUAL',
+    decimals: 18,
+  },
+  rpcUrls: ['https://rpc.ritualfoundation.org'],
+  blockExplorerUrls: ['https://explorer.ritualfoundation.org'],
+}
+
 export const RITUAL_TOM_ABI = [
   'function adoptPet(string name, string color) external',
   'function getMyPet() external view returns ((string name,string color,uint256 totalExp,uint8 hunger,uint8 happiness,uint8 energy,uint8 cleanliness,uint256 adoptedAt,uint256 updatedAt,bool adopted) pet,uint256 level,uint256 expInLevel,uint256 expToNextLevel)',
@@ -61,7 +76,7 @@ type RawPet = {
   adopted?: boolean
 }
 
-function getSelectedInjectedProvider(): InjectedProvider {
+export function getSelectedInjectedProvider(): InjectedProvider {
   if (typeof window === 'undefined') {
     throw new Error('Wallet is only available in the browser.')
   }
@@ -86,6 +101,36 @@ function getSelectedInjectedProvider(): InjectedProvider {
   return provider
 }
 
+export async function ensureRitualChain(injectedProvider?: InjectedProvider) {
+  const provider = injectedProvider || getSelectedInjectedProvider()
+
+  const currentChainId = await provider.request({
+    method: 'eth_chainId',
+  })
+
+  if (String(currentChainId).toLowerCase() === RITUAL_CHAIN_ID_HEX) {
+    return
+  }
+
+  try {
+    await provider.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: RITUAL_CHAIN_ID_HEX }],
+    })
+  } catch (switchError: any) {
+    if (switchError?.code === 4902) {
+      await provider.request({
+        method: 'wallet_addEthereumChain',
+        params: [RITUAL_CHAIN_PARAMS],
+      })
+
+      return
+    }
+
+    throw switchError
+  }
+}
+
 export async function getProviderAndSigner(forceWalletSelection = false) {
   const injectedProvider = getSelectedInjectedProvider()
 
@@ -100,6 +145,8 @@ export async function getProviderAndSigner(forceWalletSelection = false) {
       // Continue with eth_requestAccounts.
     }
   }
+
+  await ensureRitualChain(injectedProvider)
 
   await injectedProvider.request({
     method: 'eth_requestAccounts',

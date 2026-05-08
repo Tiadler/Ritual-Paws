@@ -1,28 +1,51 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+import { BrowserProvider, Contract } from 'ethers'
+import {
+  ensureRitualChain,
+  getSelectedInjectedProvider,
+  type InjectedProvider,
+} from '@/lib/ritualTom'
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+const RITUAL_PAWS_CARD_NFT_ADDRESS =
+  process.env.NEXT_PUBLIC_RITUAL_PAWS_CARD_NFT_ADDRESS
 
-contract RitualPawsCardNFT is ERC721URIStorage, Ownable {
-    uint256 public nextTokenId;
+const RITUAL_PAWS_CARD_NFT_ABI = [
+  'function mintCard(string tokenURI) external returns (uint256)',
+] as const
 
-    event CardMinted(
-        address indexed minter,
-        uint256 indexed tokenId,
-        string tokenURI
-    );
+function getInjectedProvider(): InjectedProvider {
+  return getSelectedInjectedProvider()
+}
 
-    constructor() ERC721("Ritual Paws Card", "RPAWS") Ownable(msg.sender) {}
+export async function mintRitualPawsCard(tokenURI: string) {
+  if (!RITUAL_PAWS_CARD_NFT_ADDRESS) {
+    throw new Error('Missing NEXT_PUBLIC_RITUAL_PAWS_CARD_NFT_ADDRESS in environment variables.')
+  }
 
-    function mintCard(string calldata tokenURI) external returns (uint256) {
-        uint256 tokenId = ++nextTokenId;
+  if (!tokenURI) {
+    throw new Error('Missing tokenURI for NFT mint.')
+  }
 
-        _safeMint(msg.sender, tokenId);
-        _setTokenURI(tokenId, tokenURI);
+  const injectedProvider = getInjectedProvider()
 
-        emit CardMinted(msg.sender, tokenId, tokenURI);
+  await ensureRitualChain(injectedProvider)
 
-        return tokenId;
-    }
+  await injectedProvider.request({
+    method: 'eth_requestAccounts',
+  })
+
+  const browserProvider = new BrowserProvider(injectedProvider as any)
+  const signer = await browserProvider.getSigner()
+
+  const contract = new Contract(
+    RITUAL_PAWS_CARD_NFT_ADDRESS,
+    RITUAL_PAWS_CARD_NFT_ABI,
+    signer
+  )
+
+  const tx = await contract.mintCard(tokenURI)
+  const receipt = await tx.wait()
+
+  return {
+    txHash: receipt?.hash || tx.hash,
+  }
 }
