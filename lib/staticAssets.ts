@@ -48,11 +48,11 @@ export const STATIC_ROOT = '/static'
 export const ASSET_COUNTS = {
   pet: 10,
   themeBackgroundRoom: 9,
-  hat: 4,
+  hat: 14,
   glass: 6,
   necklace: 4,
   shirt: 0,
-  handheld: 3,
+  handheld: 9,
 }
 
 function staticPath(folder: string, fileBase: string, index: number, ext: 'png' | 'svg' | 'webp' = 'png') {
