@@ -23,7 +23,7 @@ import { CardMarquee } from '@/components/CardMarquee'
 const DEFAULT_PET_NAME = 'Your Pet'
 const DEFAULT_PET_COLOR = 'black'
 const CONNECT_BACKGROUND_SRC = '/static/bg/bg.png'
-const CONNECT_PET_PREVIEW_SRC = '/static/mascot/Pet(7).png'
+const CONNECT_PET_PREVIEW_SRC = '/static/Pet/Pet(7).png'
 
 type SavedPetAppearance = {
   equippedRoomItems: EquippedRoomItem[]
@@ -81,8 +81,16 @@ function saveAppearance(address: string, appearance: SavedPetAppearance) {
 
 function CreatedByTiadler() {
   return (
-    <div className="pointer-events-none fixed bottom-4 right-5 z-[999] rounded-full border border-white/10 bg-black/25 px-4 py-2 text-xs font-medium tracking-wide text-white/60 shadow-lg backdrop-blur-md">
-      Created by Tiadler
+    <div className="fixed bottom-4 right-5 z-[999] rounded-full border border-white/10 bg-black/25 px-4 py-2 text-xs font-medium tracking-wide text-white/60 shadow-lg backdrop-blur-md">
+      Created by{' '}
+      <a
+        href="https://x.com/Neitenoz26"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="pointer-events-auto font-semibold text-white/80 underline decoration-white/20 underline-offset-4 transition hover:text-[#00E5C4] hover:decoration-[#00E5C4]/60"
+      >
+        Tiadler
+      </a>
     </div>
   )
 }
@@ -337,27 +345,27 @@ export default function Page() {
               >
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_30%,rgba(0,229,196,0.12),transparent_34%),radial-gradient(circle_at_86%_75%,rgba(255,215,0,0.08),transparent_32%)]" />
 
-                <div className="relative z-10 grid grid-cols-1 gap-7 sm:grid-cols-[1fr_2fr] sm:items-center">
-                  <div className="flex items-center justify-center">
+                <div className="relative z-10 grid grid-cols-1 gap-8 sm:grid-cols-[1fr_2fr] sm:items-center">
+                  <div className="flex min-h-[270px] items-center justify-center sm:min-h-[310px]">
                     <img
                       src={CONNECT_PET_PREVIEW_SRC}
                       alt="Ritual Paws pet preview"
                       onError={(event) => imageFallback(event, previewPetArt.fallbackSrc)}
-                      className="h-[180px] w-full object-contain drop-shadow-[0_0_34px_rgba(0,229,196,0.25)] sm:h-[210px]"
+                      className="h-[260px] w-full scale-110 object-contain drop-shadow-[0_0_36px_rgba(0,229,196,0.28)] sm:h-[315px] sm:scale-125"
                       draggable={false}
                     />
                   </div>
 
                   <div className="min-w-0">
-                    <div className="text-sm font-semibold uppercase tracking-[0.25em] text-[#00E5C4]">
+                    <div className="text-sm font-semibold uppercase tracking-[0.35em] text-[#00E5C4]">
                       Companion ready
                     </div>
 
-                    <div className="mt-3 text-2xl font-bold leading-tight text-white">
+                    <div className="mt-4 text-3xl font-bold leading-tight text-white sm:text-4xl">
                       Your first Ritual Paw is waiting.
                     </div>
 
-                    <div className="mt-3 text-sm leading-6 text-white/65">
+                    <div className="mt-5 text-justify text-base leading-8 text-white/68">
                       Start with a default pet, then rename, recolor, customize the room, equip items, generate a card, and mint your favorite moment as an NFT.
                     </div>
                   </div>

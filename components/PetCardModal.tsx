@@ -4,6 +4,7 @@ import { useMemo, useRef, useState, type CSSProperties } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toPng } from 'html-to-image'
 import { mintRitualPawsCard } from '@/lib/ritualPawsCardNft'
+import { CardCollectionModal } from '@/components/CardCollectionModal'
 import {
   DEFAULT_ROOM_BACKGROUND,
   getPetArtByColor,
@@ -161,6 +162,7 @@ export function PetCardModal({
 
   const [downloading, setDownloading] = useState(false)
   const [mintingNft, setMintingNft] = useState(false)
+  const [showCollection, setShowCollection] = useState(false)
 
   const [mintResultModal, setMintResultModal] = useState<MintResultModal>({
     open: false,
@@ -620,16 +622,21 @@ export function PetCardModal({
                   </button>
 
                   <button
-                    onClick={onClose}
-                    className="w-full rounded-2xl border border-white/10 bg-transparent px-5 py-3 text-sm font-semibold text-white/70 transition hover:bg-white/5 hover:text-white"
+                    onClick={() => setShowCollection(true)}
+                    className="w-full rounded-2xl border border-[#FFD700]/30 bg-[#FFD700]/10 px-5 py-3 text-sm font-semibold text-[#FFD700] transition hover:bg-[#FFD700]/20"
                   >
-                    Close
+                    Collection Card
                   </button>
                 </div>
               </div>
             </div>
           </div>
         </motion.div>
+
+        <CardCollectionModal
+          open={showCollection}
+          onClose={() => setShowCollection(false)}
+        />
 
         {mintResultModal.open ? (
           <div
