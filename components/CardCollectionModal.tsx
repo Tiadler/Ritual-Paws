@@ -7,6 +7,7 @@ const CARD_COUNT = 20
 const AUTOPLAY_MS = 1000
 const IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp'] as const
 const BACKGROUND_BASE_NAME = 'bg'
+const CARD_FOLDER_NAME = 'Card'
 
 function imagePath(folder: string, name: string, ext: string) {
   return `/static/${folder}/${name}.${ext}`
@@ -77,8 +78,8 @@ function CollectionCard({
   total: number
   onSelect: (index: number) => void
 }) {
-  const baseName = `card(${number})`
-  const { src, failed, handleError } = useImageFallback('card', baseName)
+  const baseName = `Card(${number})`
+  const { src, failed, handleError } = useImageFallback(CARD_FOLDER_NAME, baseName)
 
   const offset = getCircularOffset(index, activeIndex, total)
   const absOffset = Math.abs(offset)
@@ -122,7 +123,7 @@ function CollectionCard({
           <div className="text-4xl">🖼️</div>
           <div className="text-xl font-black">{baseName}</div>
           <div className="text-xs leading-5 text-white/60">
-            Add image to public/static/card
+            Add image to public/static/Card
           </div>
         </div>
       )}
@@ -193,9 +194,6 @@ export function CardCollectionModal({
                   Card Collection
                 </h2>
 
-                <p className="mt-3 max-w-[680px] text-sm leading-6 text-white/70 sm:text-base">
-                  Browse your Ritual Paws card showcase. Add images as card(1), card(2), ... inside public/static/card.
-                </p>
               </div>
 
               <button
