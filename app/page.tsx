@@ -23,7 +23,6 @@ import { CardMarquee } from '@/components/CardMarquee'
 const DEFAULT_PET_NAME = 'Your Pet'
 const DEFAULT_PET_COLOR = 'black'
 const CONNECT_BACKGROUND_SRC = '/static/bg/bg.png'
-const CONNECT_PET_PREVIEW_SRC = '/static/Pet/Pet(7).png'
 
 type SavedPetAppearance = {
   equippedRoomItems: EquippedRoomItem[]
@@ -313,60 +312,55 @@ export default function Page() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,107,157,0.20),transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(0,229,196,0.18),transparent_30%),linear-gradient(180deg,rgba(15,15,26,0.08)_0%,rgba(15,15,26,0.72)_100%)]" />
 
         <div className="relative z-10">
-          <div className="max-w-6xl mx-auto px-6 py-24 lg:py-32">
-            <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] items-center">
-              <div className="space-y-8">
-                <div className="inline-flex items-center gap-3 rounded-full bg-black/30 px-4 py-2 text-sm text-white/85 shadow-lg backdrop-blur-md">
+          <div className="mx-auto max-w-[92rem] px-6 py-20 lg:px-8 lg:py-28">
+            <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1.04fr)_minmax(30rem,36rem)] lg:gap-20">
+              <div className="max-w-[42rem] space-y-9 lg:space-y-10">
+                <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-black/30 px-5 py-2.5 text-sm font-medium text-white/85 shadow-lg backdrop-blur-md">
                   <span className="text-[#00E5C4]">MVP On-chain</span>
+                  <span className="h-1 w-1 rounded-full bg-white/35" />
                   <span>1 wallet = 1 pet</span>
                 </div>
 
                 <div>
-                  <h1 className="text-5xl sm:text-6xl font-bold tracking-tight drop-shadow-[0_0_22px_rgba(0,0,0,0.55)]">
+                  <h1 className="text-5xl font-bold tracking-[-0.04em] drop-shadow-[0_0_22px_rgba(0,0,0,0.55)] sm:text-6xl lg:text-[5.25rem]">
                     Ritual Paws
                   </h1>
 
-                  <p className="mt-4 max-w-xl text-lg text-white/75">
+                  <p className="mt-5 max-w-[34rem] text-xl leading-9 text-white/76">
                     Customize, raise, and share your on-chain companion.
                   </p>
                 </div>
 
-                <ConnectWalletButton onConnect={handleConnect} />
+                <div className="flex flex-col items-start gap-5">
+                  <ConnectWalletButton onConnect={handleConnect} />
 
-                <p className="text-sm text-white/65">
-                  Connect your wallet on Ritual Chain. Your wallet address is your user account.
-                </p>
+                  <p className="max-w-[32rem] text-[15px] leading-7 text-white/62">
+                    Connect your wallet on Ritual Chain. Your wallet address is your user account.
+                  </p>
+                </div>
               </div>
 
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#11111F]/68 p-8 shadow-[0_40px_120px_-40px_rgba(255,107,157,0.7)] backdrop-blur-md sm:p-10"
+                transition={{ duration: 0.55, ease: 'easeOut' }}
+                className="relative w-full justify-self-end overflow-hidden rounded-[2.4rem] border border-white/10 bg-[#11111F]/72 p-10 shadow-[0_48px_120px_-48px_rgba(255,107,157,0.72)] backdrop-blur-md sm:p-12 lg:p-14"
               >
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_30%,rgba(0,229,196,0.12),transparent_34%),radial-gradient(circle_at_86%_75%,rgba(255,215,0,0.08),transparent_32%)]" />
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(0,229,196,0.16),transparent_30%),radial-gradient(circle_at_84%_82%,rgba(255,107,157,0.14),transparent_28%),radial-gradient(circle_at_50%_100%,rgba(255,215,0,0.10),transparent_24%)]" />
+                <div className="pointer-events-none absolute inset-[1px] rounded-[2.3rem] border border-white/[0.04]" />
 
-                <div className="relative z-10 grid grid-cols-1 gap-8 sm:grid-cols-[1fr_2fr] sm:items-center">
-                  <div className="flex min-h-[270px] items-center justify-center sm:min-h-[310px]">
-                    <img
-                      src={CONNECT_PET_PREVIEW_SRC}
-                      alt="Ritual Paws pet preview"
-                      onError={(event) => imageFallback(event, previewPetArt.fallbackSrc)}
-                      className="h-[260px] w-full scale-110 object-contain drop-shadow-[0_0_36px_rgba(0,229,196,0.28)] sm:h-[315px] sm:scale-125"
-                      draggable={false}
-                    />
-                  </div>
-
-                  <div className="min-w-0">
-                    <div className="text-sm font-semibold uppercase tracking-[0.35em] text-[#00E5C4]">
-                      Companion ready
+                <div className="relative z-10 flex min-h-[20rem] flex-col justify-center">
+                  <div className="max-w-[30rem]">
+                    <div className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.28em] text-[#00E5C4]">
+                      Companion Journey
                     </div>
 
-                    <div className="mt-4 text-3xl font-bold leading-tight text-white sm:text-4xl">
-                      Your first Ritual Paw is waiting.
+                    <div className="mt-6 text-4xl font-bold leading-[1.02] text-white sm:text-[3.15rem]">
+                      Your first Ritual Paw is waiting
                     </div>
 
-                    <div className="mt-5 text-justify text-base leading-8 text-white/68">
-                      Start with a default pet, then rename, recolor, customize the room, equip items, generate a card, and mint your favorite moment as an NFT.
+                    <div className="mt-6 max-w-[28rem] text-lg leading-9 text-white/68 sm:text-[1.2rem]">
+                      Start with a default pet, give it a name, recolor its style, equip items, generate a card, and mint your favorite moment on-chain.
                     </div>
                   </div>
                 </div>
