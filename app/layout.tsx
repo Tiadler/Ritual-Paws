@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Poppins } from 'next/font/google'
 import './globals.css'
-import { ConnectWalletButton } from '@/components/ConnectWalletButton'
 
 const inter = Inter({ subsets: ['latin'] })
 const poppins = Poppins({ 
@@ -40,7 +39,6 @@ export default function RootLayout({
                   <div className="w-2 h-2 bg-[#00E5C4] rounded-full animate-pulse"></div>
                   <span>Testnet</span>
                 </div>
-                <ConnectWalletButton />
               </div>
             </div>
           </nav>
