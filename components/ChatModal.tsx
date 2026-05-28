@@ -22,10 +22,6 @@ type ChatMessage = {
 }
 
 function renderFormattedMessage(content: string) {
-  // Supports:
-  // **bold text**  -> <strong>
-  // *italic text*  -> <em>
-  // Bold is matched before italic so **...** is not split as two italic markers.
   const parts = content.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g)
 
   return parts.map((part, index) => {
@@ -49,9 +45,15 @@ function renderFormattedMessage(content: string) {
   })
 }
 
-export function ChatModal({ onClose, petLevel, mood, petStats, petName }: ChatModalProps) {
+export function ChatModal({
+  onClose,
+  petLevel,
+  mood,
+  petStats,
+  petName,
+}: ChatModalProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', content: "Hey! I'm here. Want to chat with me? 😸" },
+    { role: 'assistant', content: 'Signal received. Ready to talk?' },
   ])
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
@@ -123,56 +125,81 @@ export function ChatModal({ onClose, petLevel, mood, petStats, petName }: ChatMo
   }
 
   return (
-    <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[100] p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/88 p-4 backdrop-blur-md"
+      onClick={onClose}
+    >
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-[#1A1A2E] w-full max-w-[520px] rounded-3xl overflow-hidden border border-white/10 flex flex-col h-[620px]"
+        className="brand-panel flex h-[620px] w-full max-w-[560px] flex-col overflow-hidden rounded-[1.35rem]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="px-6 py-4 border-b border-white/10 flex items-center gap-4">
-          <div className="text-4xl">🐾</div>
-          <div className="flex-1">
-            <div className="font-semibold">Ritual Paws • {petLevel}</div>
-            <div className="text-xs text-[#00E5C4]">● Online • Mood: {mood}</div>
+        <div className="flex items-center gap-4 border-b border-[#40FFAF]/14 px-6 py-4">
+          <div className="brand-panel flex h-12 w-12 items-center justify-center rounded-none">
+            <img
+              src="/static/Pet/Pet(1).png"
+              alt="Pet 1"
+              className="h-10 w-10 object-contain"
+            />
           </div>
-          <button onClick={onClose} className="text-white/60 hover:text-white text-xl">✕</button>
+
+          <div className="flex-1">
+            <div className="text-sm font-semibold uppercase tracking-[0.14em] text-white">
+              Ritual Paws / {petLevel}
+            </div>
+            <div className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[#40FFAF]">
+              Online • Mood: {mood}
+            </div>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="brand-button-secondary px-3 py-2 text-sm"
+          >
+            Close
+          </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#11111F]">
+        <div className="brand-grid-surface flex-1 space-y-4 overflow-y-auto bg-[#0A0A0A]/60 p-6">
           {messages.map((msg, index) => (
-            <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] px-4 py-3 text-sm whitespace-pre-wrap ${msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-pet'}`}>
+            <div
+              key={index}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[80%] whitespace-pre-wrap px-4 py-3 text-sm ${msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-pet'}`}
+              >
                 {renderFormattedMessage(msg.content)}
               </div>
             </div>
           ))}
 
           {isTyping && (
-            <div className="flex items-center gap-2 text-white/60 text-sm pl-1">
+            <div className="flex items-center gap-2 pl-1 text-sm text-white/60">
               <div className="flex gap-1">
-                <div className="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce"></div>
-                <div className="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce delay-150"></div>
-                <div className="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce delay-300"></div>
+                <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-white/60"></div>
+                <div className="delay-150 h-1.5 w-1.5 animate-bounce rounded-full bg-white/60"></div>
+                <div className="delay-300 h-1.5 w-1.5 animate-bounce rounded-full bg-white/60"></div>
               </div>
               <span>Pet is thinking...</span>
             </div>
           )}
         </div>
 
-        <div className="p-4 border-t border-white/10 flex gap-3">
+        <div className="flex gap-3 border-t border-[#40FFAF]/14 p-4">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
             placeholder="Type a message to your pet..."
-            className="flex-1 bg-[#11111F] border border-white/20 rounded-2xl px-5 py-3 text-sm focus:outline-none focus:border-[#FF6B9D]"
+            className="flex-1 border border-[#40FFAF]/18 bg-[#0A0A0A] px-5 py-3 text-sm text-white outline-none transition focus:border-[#40FFAF]"
           />
           <button
             onClick={sendMessage}
             disabled={isTyping || !input.trim()}
-            className="px-6 bg-[#FF6B9D] rounded-2xl font-medium active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="brand-button-primary px-6 font-medium transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Send
           </button>

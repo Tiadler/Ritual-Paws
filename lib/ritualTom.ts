@@ -1,6 +1,8 @@
 import { BrowserProvider, Contract, formatEther, parseEther } from 'ethers'
 
 export const ACTION_PRICE = parseEther('0.0015')
+export const ACTION_PRICE_HEX = `0x${ACTION_PRICE.toString(16)}`
+export const CARE_ACTION_GAS_HEX = '0x186a0'
 
 const RITUAL_TOM_ADDRESS = process.env.NEXT_PUBLIC_RITUALTOM_ADDRESS
 
@@ -37,6 +39,90 @@ export type InjectedProvider = {
   removeListener?: (event: string, callback: (...args: any[]) => void) => void
   isMetaMask?: boolean
   isOkxWallet?: boolean
+  isOKExWallet?: boolean
+  isPhantom?: boolean
+  providers?: InjectedProvider[]
+}
+
+export type WalletProviderId = 'metamask' | 'phantom' | 'okx'
+
+export const WALLET_PROVIDER_LABELS: Record<WalletProviderId, string> = {
+  metamask: 'MetaMask',
+  phantom: 'Phantom',
+  okx: 'OKX Wallet',
+}
+
+const SELECTED_WALLET_STORAGE_KEY = 'ritualpaws-wallet'
+
+type WalletWindow = Window & {
+  ethereum?: InjectedProvider
+  okxwallet?: InjectedProvider
+  phantom?: {
+    ethereum?: InjectedProvider
+  }
+}
+
+function dedupeProviders(providers: Array<InjectedProvider | undefined | null>) {
+  return providers.filter((provider, index, list): provider is InjectedProvider =>
+    Boolean(provider) && list.indexOf(provider) === index
+  )
+}
+
+function getEthereumProviders(anyWindow: WalletWindow) {
+  const ethereum = anyWindow.ethereum
+  const providers = Array.isArray(ethereum?.providers) ? ethereum.providers : []
+
+  return dedupeProviders([...providers, ethereum])
+}
+
+export function getWalletProvider(walletId: WalletProviderId): InjectedProvider | null {
+  if (typeof window === 'undefined') return null
+
+  const anyWindow = window as WalletWindow
+  const providers = getEthereumProviders(anyWindow)
+
+  if (walletId === 'phantom') {
+    return (
+      anyWindow.phantom?.ethereum ||
+      providers.find((provider) => provider.isPhantom) ||
+      null
+    )
+  }
+
+  if (walletId === 'okx') {
+    return (
+      anyWindow.okxwallet ||
+      providers.find((provider) => provider.isOkxWallet || provider.isOKExWallet) ||
+      null
+    )
+  }
+
+  return (
+    providers.find(
+      (provider) =>
+        provider.isMetaMask &&
+        !provider.isPhantom &&
+        !provider.isOkxWallet &&
+        !provider.isOKExWallet
+    ) ||
+    providers.find((provider) => provider.isMetaMask) ||
+    null
+  )
+}
+
+export function getWalletProviderAvailability() {
+  const walletIds: WalletProviderId[] = ['metamask', 'phantom', 'okx']
+
+  return walletIds.map((id) => ({
+    id,
+    label: WALLET_PROVIDER_LABELS[id],
+    installed: Boolean(getWalletProvider(id)),
+  }))
+}
+
+export function setSelectedWalletProvider(walletId: WalletProviderId) {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(SELECTED_WALLET_STORAGE_KEY, walletId)
 }
 
 export type RitualTomPet = {
@@ -63,6 +149,8 @@ export type RitualTomPet = {
   expToNextLevel: number
 }
 
+export type PetActionType = 'feed' | 'play' | 'sleep' | 'clean'
+
 type RawPet = {
   name: string
   color: string
@@ -81,21 +169,23 @@ export function getSelectedInjectedProvider(): InjectedProvider {
     throw new Error('Wallet is only available in the browser.')
   }
 
-  const anyWindow = window as any
-  const selectedWallet = window.localStorage.getItem('ritualpaws-wallet')
+  const anyWindow = window as WalletWindow
+  const selectedWallet = window.localStorage.getItem(
+    SELECTED_WALLET_STORAGE_KEY
+  ) as WalletProviderId | null
 
-  if (selectedWallet === 'okx' && anyWindow.okxwallet) {
-    return anyWindow.okxwallet
+  if (selectedWallet) {
+    const selectedProvider = getWalletProvider(selectedWallet)
+    if (selectedProvider) return selectedProvider
   }
 
-  if (selectedWallet === 'metamask' && anyWindow.ethereum) {
-    return anyWindow.ethereum
-  }
-
-  const provider = anyWindow.ethereum || anyWindow.okxwallet
+  const provider =
+    getWalletProvider('metamask') ||
+    getWalletProvider('phantom') ||
+    getWalletProvider('okx')
 
   if (!provider) {
-    throw new Error('No wallet provider found. Please connect MetaMask or OKX Wallet first.')
+    throw new Error('No wallet provider found. Please install MetaMask, Phantom, or OKX Wallet first.')
   }
 
   return provider
@@ -148,9 +238,15 @@ export async function getProviderAndSigner(forceWalletSelection = false) {
 
   await ensureRitualChain(injectedProvider)
 
-  await injectedProvider.request({
-    method: 'eth_requestAccounts',
+  let accounts = await injectedProvider.request({
+    method: 'eth_accounts',
   })
+
+  if (forceWalletSelection || !Array.isArray(accounts) || accounts.length === 0) {
+    accounts = await injectedProvider.request({
+      method: 'eth_requestAccounts',
+    })
+  }
 
   const provider = new BrowserProvider(injectedProvider as any)
   const signer = await provider.getSigner()
@@ -182,6 +278,44 @@ export async function getRitualTomContract(forceWalletSelection = false) {
     signer,
     address,
     contract,
+  }
+}
+
+const PET_ACTION_CALL_DATA: Record<PetActionType, string> = {
+  feed: '0x37a7b7d8',
+  play: '0x93e84cd9',
+  sleep: '0x0958764e',
+  clean: '0xfc4333cd',
+}
+
+export async function runPetActionRaw(action: PetActionType) {
+  if (!RITUAL_TOM_ADDRESS) {
+    throw new Error('Missing NEXT_PUBLIC_RITUALTOM_ADDRESS in environment variables.')
+  }
+
+  const { injectedProvider, provider, address } = await getProviderAndSigner()
+  const txHash = await injectedProvider.request({
+    method: 'eth_sendTransaction',
+    params: [
+      {
+        from: address,
+        to: RITUAL_TOM_ADDRESS,
+        data: PET_ACTION_CALL_DATA[action],
+        value: ACTION_PRICE_HEX,
+        gas: CARE_ACTION_GAS_HEX,
+      },
+    ],
+  })
+
+  const receipt = await provider.waitForTransaction(txHash)
+
+  if (!receipt || receipt.status !== 1) {
+    throw new Error('Transaction failed on-chain.')
+  }
+
+  return {
+    address,
+    txHash,
   }
 }
 

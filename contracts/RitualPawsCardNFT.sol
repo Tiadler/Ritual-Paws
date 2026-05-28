@@ -1,51 +1,37 @@
-import { BrowserProvider, Contract } from 'ethers'
-import {
-  ensureRitualChain,
-  getSelectedInjectedProvider,
-  type InjectedProvider,
-} from '@/lib/ritualTom'
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
 
-const RITUAL_PAWS_CARD_NFT_ADDRESS =
-  process.env.NEXT_PUBLIC_RITUAL_PAWS_CARD_NFT_ADDRESS
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-const RITUAL_PAWS_CARD_NFT_ABI = [
-  'function mintCard(string tokenURI) external returns (uint256)',
-] as const
+contract RitualPawsCardNFT is ERC721, ERC721URIStorage {
+    uint256 private _nextTokenId = 1;
 
-function getInjectedProvider(): InjectedProvider {
-  return getSelectedInjectedProvider()
-}
+    constructor() ERC721("Ritual Paws Card", "RPWC") {}
 
-export async function mintRitualPawsCard(tokenURI: string) {
-  if (!RITUAL_PAWS_CARD_NFT_ADDRESS) {
-    throw new Error('Missing NEXT_PUBLIC_RITUAL_PAWS_CARD_NFT_ADDRESS in environment variables.')
-  }
+    function mintCard(string calldata metadataURI) external returns (uint256 tokenId) {
+        tokenId = _nextTokenId;
+        _nextTokenId += 1;
 
-  if (!tokenURI) {
-    throw new Error('Missing tokenURI for NFT mint.')
-  }
+        _safeMint(msg.sender, tokenId);
+        _setTokenURI(tokenId, metadataURI);
+    }
 
-  const injectedProvider = getInjectedProvider()
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
 
-  await ensureRitualChain(injectedProvider)
-
-  await injectedProvider.request({
-    method: 'eth_requestAccounts',
-  })
-
-  const browserProvider = new BrowserProvider(injectedProvider as any)
-  const signer = await browserProvider.getSigner()
-
-  const contract = new Contract(
-    RITUAL_PAWS_CARD_NFT_ADDRESS,
-    RITUAL_PAWS_CARD_NFT_ABI,
-    signer
-  )
-
-  const tx = await contract.mintCard(tokenURI)
-  const receipt = await tx.wait()
-
-  return {
-    txHash: receipt?.hash || tx.hash,
-  }
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
 }

@@ -18,10 +18,21 @@ interface InventoryModalProps {
   currentEquippedItems?: EquippedRoomItem[]
   currentRoomBackgroundSrc?: string
   currentDisplayPetColor?: string
-  onApply: (items: EquippedRoomItem[], backgroundSrc?: string, petColor?: string) => void
+  onApply: (
+    items: EquippedRoomItem[],
+    backgroundSrc?: string,
+    petColor?: string
+  ) => void
 }
 
-type TabType = 'pet' | 'hat' | 'glass' | 'necklace' | 'shirt' | 'handheld' | 'background'
+type TabType =
+  | 'pet'
+  | 'hat'
+  | 'glass'
+  | 'necklace'
+  | 'shirt'
+  | 'handheld'
+  | 'background'
 
 type StaticArt =
   | string
@@ -77,50 +88,19 @@ const tabs: { id: TabType; label: string }[] = [
 ]
 
 const DEFAULT_PLACEMENTS: Record<WearableSlot, ItemPlacement> = {
-  hat: {
-    left: 50,
-    top: 18,
-    width: 38,
-    rotation: 0,
-    zIndex: 30,
-  },
-  glass: {
-    left: 50,
-    top: 42,
-    width: 34,
-    rotation: 0,
-    zIndex: 40,
-  },
-  necklace: {
-    left: 50,
-    top: 60,
-    width: 30,
-    rotation: 0,
-    zIndex: 35,
-  },
-  shirt: {
-    left: 50,
-    top: 70,
-    width: 48,
-    rotation: 0,
-    zIndex: 20,
-  },
-  handheld: {
-    left: 72,
-    top: 58,
-    width: 30,
-    rotation: -8,
-    zIndex: 45,
-  },
+  hat: { left: 50, top: 18, width: 38, rotation: 0, zIndex: 30 },
+  glass: { left: 50, top: 42, width: 34, rotation: 0, zIndex: 40 },
+  necklace: { left: 50, top: 60, width: 30, rotation: 0, zIndex: 35 },
+  shirt: { left: 50, top: 70, width: 48, rotation: 0, zIndex: 20 },
+  handheld: { left: 72, top: 58, width: 30, rotation: -8, zIndex: 45 },
 }
 
-const PET_COLOR_BY_INDEX: Record<number, string> = Object.entries(CAT_COLOR_TO_PET_INDEX).reduce(
-  (acc, [color, index]) => {
-    acc[index] = color
-    return acc
-  },
-  {} as Record<number, string>
-)
+const PET_COLOR_BY_INDEX: Record<number, string> = Object.entries(
+  CAT_COLOR_TO_PET_INDEX
+).reduce((acc, [color, index]) => {
+  acc[index] = color
+  return acc
+}, {} as Record<number, string>)
 
 const petOptions: PetOption[] = PET_ART.map((pet, index) => {
   const petIndex = index + 1
@@ -172,7 +152,10 @@ function buildWearableItems(
     }))
 }
 
-function buildBackgroundItems(arts: StaticArt[], startId: number): InventoryItem[] {
+function buildBackgroundItems(
+  arts: StaticArt[],
+  startId: number
+): InventoryItem[] {
   return arts
     .filter(Boolean)
     .map((art, index) => ({
@@ -206,15 +189,18 @@ function getPlacementStyle(placement: ItemPlacement): CSSProperties {
 
 function getInitialSelectedItems(items: EquippedRoomItem[]) {
   const initial: Record<string, EquippedRoomItem> = {}
-
   items.forEach((item) => {
     initial[item.id] = item
   })
-
   return initial
 }
 
-function getPointerAngle(clientX: number, clientY: number, centerX: number, centerY: number) {
+function getPointerAngle(
+  clientX: number,
+  clientY: number,
+  centerX: number,
+  centerY: number
+) {
   return Math.atan2(clientY - centerY, clientX - centerX) * (180 / Math.PI)
 }
 
@@ -230,27 +216,32 @@ export function InventoryModal({
   const dragRef = useRef<DragState | null>(null)
 
   const [activeTab, setActiveTab] = useState<TabType>('pet')
-  const [selectedItems, setSelectedItems] = useState<Record<string, EquippedRoomItem>>(() =>
-    getInitialSelectedItems(currentEquippedItems)
-  )
+  const [selectedItems, setSelectedItems] = useState<
+    Record<string, EquippedRoomItem>
+  >(() => getInitialSelectedItems(currentEquippedItems))
   const [activeItemKey, setActiveItemKey] = useState<string>(
     currentEquippedItems[0]?.id || ''
   )
-  const [selectedBackgroundSrc, setSelectedBackgroundSrc] = useState<string | undefined>(
-    currentRoomBackgroundSrc
-  )
+  const [selectedBackgroundSrc, setSelectedBackgroundSrc] = useState<
+    string | undefined
+  >(currentRoomBackgroundSrc)
   const [selectedPetColor, setSelectedPetColor] = useState(
     currentDisplayPetColor || petColor
   )
 
   const petArt = getPetArtByColor(selectedPetColor)
   const currentItems = activeTab === 'pet' ? [] : shopItems[activeTab]
-  const equippedItems = useMemo(() => Object.values(selectedItems), [selectedItems])
+  const equippedItems = useMemo(
+    () => Object.values(selectedItems),
+    [selectedItems]
+  )
   const activeItem = activeItemKey ? selectedItems[activeItemKey] : undefined
 
   const handleToggleItem = (item: InventoryItem) => {
     if (item.slot === 'background') {
-      setSelectedBackgroundSrc((current) => (current === item.art ? undefined : item.art))
+      setSelectedBackgroundSrc((current) =>
+        current === item.art ? undefined : item.art
+      )
       return
     }
 
@@ -300,7 +291,12 @@ export function InventoryModal({
 
     const centerX = box.left + (item.placement.left / 100) * box.width
     const centerY = box.top + (item.placement.top / 100) * box.height
-    const startAngle = getPointerAngle(event.clientX, event.clientY, centerX, centerY)
+    const startAngle = getPointerAngle(
+      event.clientX,
+      event.clientY,
+      centerX,
+      centerY
+    )
 
     setActiveItemKey(item.id)
 
@@ -327,8 +323,10 @@ export function InventoryModal({
     const drag = dragRef.current
     if (!drag) return
 
-    const deltaXPercent = ((event.clientX - drag.startClientX) / drag.boxWidth) * 100
-    const deltaYPercent = ((event.clientY - drag.startClientY) / drag.boxHeight) * 100
+    const deltaXPercent =
+      ((event.clientX - drag.startClientX) / drag.boxWidth) * 100
+    const deltaYPercent =
+      ((event.clientY - drag.startClientY) / drag.boxHeight) * 100
 
     setSelectedItems((prev) => {
       const item = prev[drag.itemKey]
@@ -460,43 +458,47 @@ export function InventoryModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-6"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/88 p-6 backdrop-blur-md"
       onClick={onClose}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.92 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.92 }}
-        className="flex max-h-[92vh] w-full max-w-7xl flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#1A1A2E]"
+        className="brand-panel flex max-h-[92vh] w-full max-w-7xl flex-col overflow-hidden rounded-[1.5rem]"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-white/10 px-7 py-5">
+        <div className="flex items-center justify-between border-b border-[#40FFAF]/14 px-7 py-5">
           <div>
-            <div className="text-xl font-semibold">🎒 Inventory Editor</div>
-            <div className="mt-1 text-xs text-white/45">
-              Select "Pet" to change the display color. Drag the item to move it, drag the corner to resize it, and drag the circular button to rotate it.
+            <div className="text-xl font-semibold uppercase tracking-[0.08em] text-white">
+              Inventory Editor
+            </div>
+            <div className="mt-1 text-xs uppercase tracking-[0.12em] text-white/45">
+              Select &quot;Pet&quot; to change the display color. Drag the item
+              to move it, drag the corner to resize it, and drag the circular
+              button to rotate it.
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="text-2xl text-white/50 transition hover:text-white"
+            className="brand-button-secondary px-4 py-2 text-sm transition"
           >
-            ✕
+            Close
           </button>
         </div>
 
         <div className="grid flex-1 overflow-hidden lg:grid-cols-[1fr_560px]">
-          <div className="flex min-w-0 flex-col border-r border-white/10">
-            <div className="flex gap-2 overflow-x-auto border-b border-white/10 p-4">
+          <div className="flex min-w-0 flex-col border-r border-[#40FFAF]/14">
+            <div className="flex gap-2 overflow-x-auto border-b border-[#40FFAF]/14 p-4">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                  className={`whitespace-nowrap border px-4 py-2 text-sm font-medium uppercase tracking-[0.12em] transition-all ${
                     activeTab === tab.id
-                      ? 'bg-[#00E5C4] text-black'
-                      : 'bg-white/5 text-white/70 hover:bg-white/10'
+                      ? 'border-[#40FFAF]/50 bg-[#40FFAF] text-black'
+                      : 'border-white/10 bg-white/5 text-white/70 hover:border-[#40FFAF]/30 hover:bg-white/10'
                   }`}
                 >
                   {tab.label}
@@ -515,14 +517,14 @@ export function InventoryModal({
                         key={petOption.id}
                         onClick={() => setSelectedPetColor(petOption.color)}
                         whileHover={{ scale: 1.04 }}
-                        className={`rounded-xl border-2 p-3 transition-all ${
+                        className={`brand-tag rounded-[1rem] border p-3 transition-all ${
                           isSelected
-                            ? 'border-[#00E5C4] bg-[#00E5C4]/10'
-                            : 'border-white/10 bg-white/5 hover:border-white/20'
+                            ? 'border-[#40FFAF]/45 bg-[#40FFAF]/10'
+                            : 'border-white/10 bg-white/5 hover:border-[#40FFAF]/22'
                         }`}
                       >
                         <div className="flex flex-col items-center gap-2">
-                          <div className="flex h-[92px] w-full items-center justify-center rounded-xl bg-[#0F0F1A] p-2">
+                          <div className="flex h-[92px] w-full items-center justify-center rounded-xl border border-[#40FFAF]/10 bg-[#0A0A0A] p-2">
                             <img
                               src={petOption.art}
                               alt={petOption.label}
@@ -534,12 +536,14 @@ export function InventoryModal({
                             {petOption.label}
                           </div>
 
-                          <div className="rounded bg-white/10 px-2 py-0.5 text-xs capitalize text-white/60">
+                          <div className="rounded border border-white/10 bg-white/5 px-2 py-0.5 text-xs capitalize text-white/60">
                             {petOption.color}
                           </div>
 
                           {isSelected && (
-                            <div className="text-xs font-bold text-[#00E5C4]">✓ ON</div>
+                            <div className="text-xs font-bold text-[#40FFAF]">
+                              ON
+                            </div>
                           )}
                         </div>
                       </motion.button>
@@ -563,14 +567,14 @@ export function InventoryModal({
                         key={item.id}
                         onClick={() => handleToggleItem(item)}
                         whileHover={{ scale: 1.04 }}
-                        className={`rounded-xl border-2 p-3 transition-all ${
+                        className={`brand-tag rounded-[1rem] border p-3 transition-all ${
                           isSelected
-                            ? 'border-[#00E5C4] bg-[#00E5C4]/10'
-                            : 'border-white/10 bg-white/5 hover:border-white/20'
+                            ? 'border-[#40FFAF]/45 bg-[#40FFAF]/10'
+                            : 'border-white/10 bg-white/5 hover:border-[#40FFAF]/22'
                         }`}
                       >
                         <div className="flex flex-col items-center gap-2">
-                          <div className="flex h-[82px] w-full items-center justify-center rounded-xl bg-[#0F0F1A] p-2">
+                          <div className="flex h-[82px] w-full items-center justify-center rounded-xl border border-[#40FFAF]/10 bg-[#0A0A0A] p-2">
                             <img
                               src={item.art}
                               alt={item.name}
@@ -583,21 +587,23 @@ export function InventoryModal({
                           </div>
 
                           <div
-                            className={`rounded px-2 py-0.5 text-xs ${
+                            className={`rounded border px-2 py-0.5 text-xs ${
                               item.rarity === 'Epic'
-                                ? 'bg-purple-500/30 text-purple-300'
+                                ? 'border-[#8840FF]/40 bg-[#8840FF]/20 text-[#c8b1ff]'
                                 : item.rarity === 'Rare'
-                                  ? 'bg-yellow-500/30 text-yellow-300'
+                                  ? 'border-[#F6BE4F]/40 bg-[#F6BE4F]/20 text-[#F6BE4F]'
                                   : item.rarity === 'Uncommon'
-                                    ? 'bg-blue-500/30 text-blue-300'
-                                    : 'bg-white/10 text-white/60'
+                                    ? 'border-[#00C2FF]/40 bg-[#00C2FF]/20 text-[#7fdfff]'
+                                    : 'border-white/10 bg-white/5 text-white/60'
                             }`}
                           >
                             {item.rarity}
                           </div>
 
                           {isSelected && (
-                            <div className="text-xs font-bold text-[#00E5C4]">✓ ON</div>
+                            <div className="text-xs font-bold text-[#40FFAF]">
+                              ON
+                            </div>
                           )}
                         </div>
                       </motion.button>
@@ -611,7 +617,7 @@ export function InventoryModal({
           <div className="flex flex-col overflow-y-auto p-5">
             <div
               ref={previewRef}
-              className="relative mx-auto mt-8 h-[460px] w-[460px] overflow-hidden rounded-3xl border border-white/10 bg-[#11111F] bg-cover bg-center"
+              className="brand-panel brand-grid-surface relative mx-auto mt-4 h-[460px] w-[460px] overflow-hidden rounded-[1.25rem] bg-cover bg-center"
               style={
                 selectedBackgroundSrc
                   ? { backgroundImage: `url(${selectedBackgroundSrc})` }
@@ -621,7 +627,7 @@ export function InventoryModal({
               <img
                 src={petArt.src}
                 alt="Pet preview"
-                className="absolute inset-0 z-10 h-full w-full object-contain select-none pointer-events-none"
+                className="absolute inset-0 z-10 h-full w-full select-none object-contain pointer-events-none"
                 draggable={false}
               />
 
@@ -632,7 +638,7 @@ export function InventoryModal({
                   <div
                     key={item.id}
                     className={`absolute select-none ${
-                      isActive ? 'outline outline-2 outline-[#00E5C4]' : ''
+                      isActive ? 'outline outline-2 outline-[#40FFAF]' : ''
                     }`}
                     style={getPlacementStyle(item.placement)}
                     onPointerDown={(event) => startInteraction(event, item, 'move')}
@@ -652,8 +658,10 @@ export function InventoryModal({
                         <button
                           type="button"
                           aria-label="Rotate item"
-                          className="absolute left-1/2 top-[-38px] h-7 w-7 -translate-x-1/2 cursor-grab rounded-full border border-white/60 bg-[#00E5C4] text-[11px] text-black shadow-lg active:cursor-grabbing"
-                          onPointerDown={(event) => startInteraction(event, item, 'rotate')}
+                          className="absolute left-1/2 top-[-38px] flex h-7 w-7 -translate-x-1/2 cursor-grab items-center justify-center border border-[#40FFAF]/40 bg-[#40FFAF] text-[11px] text-black shadow-lg active:cursor-grabbing"
+                          onPointerDown={(event) =>
+                            startInteraction(event, item, 'rotate')
+                          }
                           onPointerMove={handlePointerMove}
                           onPointerUp={handlePointerUp}
                           onPointerCancel={handlePointerUp}
@@ -661,13 +669,15 @@ export function InventoryModal({
                           ↻
                         </button>
 
-                        <div className="absolute left-1/2 top-[-13px] h-[20px] w-px -translate-x-1/2 bg-[#00E5C4]" />
+                        <div className="absolute left-1/2 top-[-13px] h-[20px] w-px -translate-x-1/2 bg-[#40FFAF]" />
 
                         <button
                           type="button"
                           aria-label="Resize item"
-                          className="absolute bottom-[-10px] right-[-10px] h-6 w-6 cursor-nwse-resize rounded-full border border-white/70 bg-[#00E5C4] text-[10px] text-black shadow-lg"
-                          onPointerDown={(event) => startInteraction(event, item, 'resize')}
+                          className="absolute bottom-[-10px] right-[-10px] flex h-6 w-6 cursor-nwse-resize items-center justify-center border border-[#40FFAF]/40 bg-[#40FFAF] text-[10px] text-black shadow-lg"
+                          onPointerDown={(event) =>
+                            startInteraction(event, item, 'resize')
+                          }
                           onPointerMove={handlePointerMove}
                           onPointerUp={handlePointerUp}
                           onPointerCancel={handlePointerUp}
@@ -685,7 +695,7 @@ export function InventoryModal({
               <button
                 onClick={bringForward}
                 disabled={!activeItem}
-                className="rounded-xl bg-white/5 px-4 py-2 text-xs text-white/70 transition hover:bg-white/10 disabled:opacity-35"
+                className="brand-button-secondary px-4 py-2 text-xs transition disabled:opacity-35"
               >
                 Bring front
               </button>
@@ -693,7 +703,7 @@ export function InventoryModal({
               <button
                 onClick={sendBackward}
                 disabled={!activeItem}
-                className="rounded-xl bg-white/5 px-4 py-2 text-xs text-white/70 transition hover:bg-white/10 disabled:opacity-35"
+                className="brand-button-secondary px-4 py-2 text-xs transition disabled:opacity-35"
               >
                 Send back
               </button>
@@ -701,7 +711,7 @@ export function InventoryModal({
               <button
                 onClick={resetActiveItem}
                 disabled={!activeItem}
-                className="rounded-xl bg-white/5 px-4 py-2 text-xs text-white/70 transition hover:bg-white/10 disabled:opacity-35"
+                className="brand-button-secondary px-4 py-2 text-xs transition disabled:opacity-35"
               >
                 Reset item
               </button>
@@ -709,7 +719,7 @@ export function InventoryModal({
               <button
                 onClick={removeActiveItem}
                 disabled={!activeItem}
-                className="rounded-xl bg-red-500/15 px-4 py-2 text-xs text-red-200 transition hover:bg-red-500/25 disabled:opacity-35"
+                className="brand-button-danger px-4 py-2 text-xs transition disabled:opacity-35"
               >
                 Remove
               </button>
@@ -717,17 +727,17 @@ export function InventoryModal({
           </div>
         </div>
 
-        <div className="flex justify-between gap-3 border-t border-white/10 px-7 py-4">
+        <div className="flex justify-between gap-3 border-t border-[#40FFAF]/14 px-7 py-4">
           <button
             onClick={handleClearAll}
-            className="rounded-xl bg-white/5 px-6 py-2.5 font-medium text-white/70 transition-all hover:bg-white/10"
+            className="brand-button-secondary px-6 py-2.5 font-medium transition-all"
           >
             Clear all
           </button>
 
           <button
             onClick={handleApply}
-            className="rounded-xl bg-[#00E5C4] px-8 py-2.5 font-semibold text-black transition-all hover:bg-[#00E5C4]/90"
+            className="brand-button-primary px-8 py-2.5 font-semibold transition-all"
           >
             Apply to Room
           </button>

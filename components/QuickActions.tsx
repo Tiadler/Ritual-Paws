@@ -10,31 +10,56 @@ interface QuickActionsProps {
   busyAction?: string
 }
 
-export function QuickActions({ onFeed, onPlay, onSleep, onClean, busyAction }: QuickActionsProps) {
+export function QuickActions({
+  onFeed,
+  onPlay,
+  onSleep,
+  onClean,
+  busyAction,
+}: QuickActionsProps) {
   const actions = [
-    { key: 'feed', label: 'Food', icon: '🍖', onClick: onFeed, color: '#FF6B9D' },
-    { key: 'play', label: 'Play', icon: '🎾', onClick: onPlay, color: '#00E5C4' },
-    { key: 'sleep', label: 'Sleep', icon: '😴', onClick: onSleep, color: '#7C3AED' },
-    { key: 'clean', label: 'Bath', icon: '🛁', onClick: onClean, color: '#3B82F6' },
+    { key: 'feed', label: 'Feed', onClick: onFeed, color: '#FF5757' },
+    { key: 'play', label: 'Play', onClick: onPlay, color: '#40FFAF' },
+    { key: 'sleep', label: 'Sleep', onClick: onSleep, color: '#8840FF' },
+    { key: 'clean', label: 'Clean', onClick: onClean, color: '#00C2FF' },
   ]
 
   return (
     <div className="grid grid-cols-2 gap-3">
       {actions.map((action) => {
         const isBusy = busyAction === action.key
+
         return (
           <motion.button
             key={action.key}
-            whileHover={{ scale: 1.02 }}
+            whileHover={{ y: -2 }}
             whileTap={{ scale: 0.985 }}
             onClick={action.onClick}
             disabled={Boolean(busyAction)}
-            className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border border-white/10 hover:border-white/30 transition-all active:bg-white/5 disabled:cursor-not-allowed disabled:opacity-60"
-            style={{ background: `${action.color}10` }}
+            className="group relative flex min-h-[7.15rem] flex-col items-start justify-end overflow-hidden rounded-[14px] border p-4 text-left transition-all disabled:cursor-not-allowed disabled:opacity-60"
+            style={{
+              borderColor: `${action.color}52`,
+              background: `linear-gradient(145deg, ${action.color}24 0%, rgba(17,17,17,0.94) 48%, rgba(5,5,5,0.98) 100%)`,
+              boxShadow: `0 18px 45px -34px ${action.color}`,
+            }}
           >
-            <div className="text-3xl">{isBusy ? '⏳' : action.icon}</div>
-            <div className="text-sm font-medium">{isBusy ? 'Confirming...' : action.label}</div>
-            <div className="text-[11px] text-white/45">0.0015 RITUAL • +20%</div>
+            <span
+              aria-hidden="true"
+              className="absolute inset-x-0 top-0 h-1"
+              style={{
+                background: action.color,
+                boxShadow: `0 0 24px ${action.color}`,
+              }}
+            />
+
+            <div className="relative z-10">
+              <div className="text-sm font-semibold uppercase tracking-[0.14em] text-white">
+                {isBusy ? 'Confirming...' : action.label}
+              </div>
+              <div className="mt-1 text-[11px] uppercase tracking-[0.12em] text-white/45">
+                0.0015 RITUAL +20%
+              </div>
+            </div>
           </motion.button>
         )
       })}

@@ -2,7 +2,144 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --brand-black: #000000;
+    --brand-ink: #111111;
+    --brand-neon: #40ffaf;
+    --brand-neon-deep: #077345;
+    --brand-purple: #8840ff;
+    --brand-magenta: #e554e8;
+    --brand-red: #ff5757;
+    --brand-amber: #f6be4f;
+    --brand-cyan: #00c2ff;
+    --brand-grey: #e7e7e7;
+    --brand-line: rgba(64, 255, 175, 0.16);
+    --brand-line-strong: rgba(64, 255, 175, 0.34);
+    --brand-surface: rgba(17, 17, 17, 0.9);
+    --brand-surface-2: rgba(10, 10, 10, 0.96);
+  }
+
+  html {
+    background: var(--brand-black);
+  }
+
+  body {
+    background:
+      radial-gradient(circle at top left, rgba(136, 64, 255, 0.12), transparent 26%),
+      radial-gradient(circle at bottom right, rgba(64, 255, 175, 0.12), transparent 22%),
+      linear-gradient(180deg, #0a0a0a 0%, #111111 100%);
+    color: #ffffff;
+  }
+}
+
 @layer utilities {
+  .brand-app-shell {
+    background:
+      radial-gradient(circle at 18% 16%, rgba(64, 255, 175, 0.09), transparent 22%),
+      radial-gradient(circle at 82% 12%, rgba(136, 64, 255, 0.08), transparent 18%),
+      linear-gradient(rgba(64, 255, 175, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(64, 255, 175, 0.04) 1px, transparent 1px),
+      linear-gradient(180deg, #050505 0%, #111111 100%);
+    background-size: auto, auto, 38px 38px, 38px 38px, auto;
+    background-position: 0 0, 0 0, center center, center center, 0 0;
+  }
+
+  .brand-nav {
+    border-bottom: 1px solid rgba(64, 255, 175, 0.12);
+    background: rgba(8, 8, 8, 0.82);
+    backdrop-filter: blur(18px);
+  }
+
+  .brand-panel {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--brand-line);
+    border-radius: 18px;
+    background:
+      linear-gradient(135deg, rgba(64, 255, 175, 0.06), transparent 26%),
+      linear-gradient(180deg, rgba(19, 19, 19, 0.96) 0%, rgba(9, 9, 9, 0.98) 100%);
+    box-shadow:
+      0 24px 80px -48px rgba(64, 255, 175, 0.38),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .brand-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(64, 255, 175, 0.08), transparent 22%),
+      linear-gradient(180deg, transparent 68%, rgba(136, 64, 255, 0.08) 100%);
+  }
+
+  .brand-grid-surface {
+    background-image:
+      linear-gradient(rgba(64, 255, 175, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(64, 255, 175, 0.05) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-position: center;
+  }
+
+  .brand-chip {
+    border: 1px solid rgba(64, 255, 175, 0.18);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 999px;
+  }
+
+  .brand-kicker {
+    color: var(--brand-neon);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .brand-button-primary {
+    border: 1px solid rgba(64, 255, 175, 0.42);
+    background: linear-gradient(90deg, #40ffaf 0%, #00c2ff 100%);
+    color: #0b0b0b;
+    border-radius: 14px;
+    box-shadow: 0 18px 50px -28px rgba(64, 255, 175, 0.72);
+  }
+
+  .brand-button-primary:hover {
+    filter: brightness(1.04);
+    transform: translateY(-1px);
+  }
+
+  .brand-button-secondary {
+    border: 1px solid rgba(64, 255, 175, 0.24);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 14px;
+  }
+
+  .brand-button-secondary:hover {
+    border-color: rgba(64, 255, 175, 0.48);
+    background: rgba(64, 255, 175, 0.06);
+  }
+
+  .brand-button-danger {
+    border: 1px solid rgba(229, 84, 232, 0.28);
+    background: linear-gradient(90deg, rgba(229, 84, 232, 0.18), rgba(136, 64, 255, 0.18));
+    color: white;
+    border-radius: 14px;
+  }
+
+  .brand-tag {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+  }
+
+  .brand-outline-text {
+    color: var(--brand-grey);
+    text-shadow: 0 0 18px rgba(64, 255, 175, 0.12);
+  }
+
   .card-glow-hover:hover {
     box-shadow: 0 0 30px rgba(167, 255, 154, 0.55), 0 0 40px rgba(255, 255, 255, 0.16);
     transform: translateY(-2px);
@@ -41,16 +178,6 @@
   }
 }
 
-:root {
-  --primary: #FF6B9D;
-  --secondary: #00E5C4;
-  --accent: #FFD700;
-}
-
-body {
-  background: #0F0F1A;
-}
-
 /* Pet Animation */
 .pet-container {
   transition: transform 0.2s ease;
@@ -62,22 +189,23 @@ body {
 
 /* Chat Bubbles */
 .chat-bubble-user {
-  background: #FF6B9D;
+  background: linear-gradient(135deg, rgba(64, 255, 175, 0.22), rgba(0, 194, 255, 0.2));
+  border: 1px solid rgba(64, 255, 175, 0.22);
   color: white;
-  border-radius: 18px 18px 4px 18px;
+  border-radius: 14px 14px 4px 14px;
 }
 
 .chat-bubble-pet {
-  background: #1A1A2E;
-  border: 1px solid rgba(0, 229, 196, 0.3);
-  border-radius: 18px 18px 18px 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(64, 255, 175, 0.18);
+  border-radius: 14px 14px 14px 4px;
 }
 
 /* Room */
 .room {
-  background: linear-gradient(145deg, #1A1A2E 0%, #16213E 100%);
-  border: 2px solid rgba(255, 107, 157, 0.2);
-  box-shadow: 0 0 40px rgba(255, 107, 157, 0.1);
+  background: linear-gradient(145deg, #111111 0%, #080808 100%);
+  border: 1px solid rgba(64, 255, 175, 0.18);
+  box-shadow: 0 0 40px rgba(64, 255, 175, 0.08);
 }
 
 .furniture {
@@ -96,15 +224,17 @@ body {
 
 /* Status Bar */
 .status-bar {
-  height: 8px;
-  background: #1A1A2E;
-  border-radius: 9999px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 999px;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .status-fill {
   height: 100%;
   transition: width 0.4s ease;
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.16);
 }
 
 /* Shop Card */

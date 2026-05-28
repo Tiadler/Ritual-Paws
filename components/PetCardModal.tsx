@@ -291,7 +291,7 @@ export function PetCardModal({
   return (
     <AnimatePresence>
       <div
-        className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 p-3 backdrop-blur-md sm:p-4 lg:p-6"
+        className="fixed inset-0 z-[120] flex items-center justify-center bg-black/86 p-3 backdrop-blur-md sm:p-4 lg:p-6"
         onClick={onClose}
       >
         <motion.div
@@ -299,32 +299,33 @@ export function PetCardModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: 16 }}
           transition={{ duration: 0.22 }}
-          className="flex max-h-[94vh] w-full max-w-[1080px] flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[#11111F] shadow-2xl"
+          className="brand-panel flex max-h-[94vh] w-full max-w-[1120px] flex-col overflow-hidden rounded-[18px] shadow-[0_34px_120px_-56px_rgba(64,255,175,0.38)]"
           onClick={(event) => event.stopPropagation()}
         >
-          <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3 sm:px-6 sm:py-4">
+          <div className="relative z-10 flex shrink-0 items-center justify-between border-b border-[#40FFAF]/14 px-4 py-3 sm:px-6 sm:py-4">
             <div>
-              <div className="text-base font-semibold text-white sm:text-lg">
+              <div className="brand-kicker">Card Forge</div>
+              <div className="mt-2 text-xl font-bold uppercase tracking-[0.02em] text-white sm:text-2xl">
                 Create Ritual Paws Card
               </div>
-              <div className="mt-1 text-[11px] text-white/45 sm:text-xs">
+              <div className="mt-1 max-w-[34rem] text-xs leading-5 text-white/48 sm:text-sm">
                 Your card syncs with your current pet, equipped items, and room background.
               </div>
             </div>
 
             <button
               onClick={onClose}
-              className="rounded-xl bg-white/5 px-3 py-2 text-xl leading-none text-white/60 transition hover:bg-white/10 hover:text-white"
+              className="brand-button-secondary px-3 py-2 text-xl leading-none transition"
             >
               ✕
             </button>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-5 lg:p-6">
+          <div className="relative z-10 min-h-0 flex-1 overflow-y-auto p-3 sm:p-5 lg:p-6">
             <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-6">
-              <div className="relative min-h-[560px] overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,#0A1017_0%,#0B131B_42%,#0A0F16_100%)] px-3 py-5 sm:min-h-[650px] sm:px-5 sm:py-7 lg:min-h-[760px] lg:px-6 lg:py-8">
+              <div className="brand-grid-surface relative min-h-[560px] overflow-hidden rounded-[14px] border border-[#40FFAF]/16 bg-[linear-gradient(180deg,#050505_0%,#0B1210_48%,#050505_100%)] px-3 py-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:min-h-[650px] sm:px-5 sm:py-7 lg:min-h-[760px] lg:px-6 lg:py-8">
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                  <div className="absolute inset-x-0 bottom-0 h-44 bg-[radial-gradient(circle_at_bottom,_rgba(255,255,255,0.08),transparent_65%)]" />
+                  <div className="absolute inset-x-0 bottom-0 h-44 bg-[radial-gradient(circle_at_bottom,_rgba(64,255,175,0.10),transparent_65%)]" />
 
                   {FIREFLIES.map((firefly, index) => (
                     <motion.span
@@ -584,14 +585,29 @@ export function PetCardModal({
                 </div>
               </div>
 
-              <div className="flex flex-col justify-between rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+              <div className="flex flex-col justify-between rounded-[14px] border border-[#40FFAF]/16 bg-black/32 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:p-5">
                 <div>
-                  <div className="text-sm font-semibold text-white">
+                  <div className="brand-kicker">
                     Export options
                   </div>
 
-                  <div className="mt-2 text-sm leading-6 text-white/55">
+                  <div className="mt-4 text-sm leading-6 text-white/56">
                     Download the front card as PNG or mint the front card as an NFT on Ritual testnet.
+                  </div>
+
+                  <div className="mt-5 space-y-2">
+                    <div className="brand-tag flex items-center justify-between px-3 py-2 text-xs">
+                      <span className="uppercase tracking-[0.14em] text-white/42">Level</span>
+                      <span className="font-mono text-white/82">{level}</span>
+                    </div>
+                    <div className="brand-tag flex items-center justify-between px-3 py-2 text-xs">
+                      <span className="uppercase tracking-[0.14em] text-white/42">Mood</span>
+                      <span className="font-mono uppercase text-white/82">{mood}</span>
+                    </div>
+                    <div className="brand-tag flex items-center justify-between px-3 py-2 text-xs">
+                      <span className="uppercase tracking-[0.14em] text-white/42">EXP</span>
+                      <span className="font-mono text-white/82">{expPercent}%</span>
+                    </div>
                   </div>
                 </div>
 
@@ -600,7 +616,7 @@ export function PetCardModal({
                     <button
                       onClick={handleDownload}
                       disabled={downloading}
-                      className="rounded-2xl border border-[#00E5C4]/30 bg-[#00E5C4]/10 px-5 py-3 text-sm font-semibold text-[#00E5C4] transition hover:bg-[#00E5C4]/20 disabled:opacity-60"
+                      className="brand-button-secondary px-5 py-3 text-sm font-semibold transition disabled:opacity-60"
                     >
                       {downloading ? 'Downloading...' : 'Download PNG'}
                     </button>
@@ -608,7 +624,7 @@ export function PetCardModal({
                     <button
                       onClick={handleMintCardNft}
                       disabled={mintingNft}
-                      className="rounded-2xl bg-gradient-to-r from-[#00E5C4] to-[#FFD700] px-5 py-3 text-sm font-bold text-[#0F172A] transition hover:brightness-110 disabled:opacity-60"
+                      className="brand-button-primary px-5 py-3 text-sm font-bold transition disabled:opacity-60"
                     >
                       {mintingNft ? 'Minting NFT...' : 'Mint NFT'}
                     </button>
@@ -616,14 +632,14 @@ export function PetCardModal({
 
                   <button
                     onClick={handleShareToX}
-                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                    className="brand-button-secondary w-full px-5 py-3 text-sm font-semibold transition"
                   >
                     Share on X
                   </button>
 
                   <button
                     onClick={() => setShowCollection(true)}
-                    className="w-full rounded-2xl border border-[#FFD700]/30 bg-[#FFD700]/10 px-5 py-3 text-sm font-semibold text-[#FFD700] transition hover:bg-[#FFD700]/20"
+                    className="w-full rounded-[14px] border border-[#F6BE4F]/32 bg-[#F6BE4F]/10 px-5 py-3 text-sm font-semibold text-[#F6BE4F] transition hover:bg-[#F6BE4F]/16"
                   >
                     Collection Card
                   </button>

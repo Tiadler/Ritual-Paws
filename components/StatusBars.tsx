@@ -5,31 +5,46 @@ interface StatusBarsProps {
   cleanliness: number
 }
 
-export function StatusBars({ hunger, happiness, energy, cleanliness }: StatusBarsProps) {
+export function StatusBars({
+  hunger,
+  happiness,
+  energy,
+  cleanliness,
+}: StatusBarsProps) {
   const bars = [
-    { label: 'Food', value: hunger, color: '#FF6B9D', icon: '🍖' },
-    { label: 'Play', value: happiness, color: '#00E5C4', icon: '😺' },
-    { label: 'Sleep', value: energy, color: '#FFD700', icon: '⚡' },
-    { label: 'Clean', value: cleanliness, color: '#60A5FA', icon: '🛁' },
+    { label: 'Feed', value: hunger, color: '#FF5757', code: 'FD' },
+    { label: 'Play', value: happiness, color: '#40FFAF', code: 'PL' },
+    { label: 'Sleep', value: energy, color: '#8840FF', code: 'SL' },
+    { label: 'Clean', value: cleanliness, color: '#00C2FF', code: 'CL' },
   ]
 
   return (
-    <div className="space-y-5">
-      {bars.map((bar, index) => (
-        <div key={index}>
-          <div className="flex items-center justify-between text-sm mb-2">
+    <div className="space-y-4">
+      {bars.map((bar) => (
+        <div key={bar.label} className="brand-tag p-3">
+          <div className="mb-2 flex items-center justify-between text-sm">
             <div className="flex items-center gap-2">
-              <span>{bar.icon}</span>
-              <span className="text-white/80">{bar.label}</span>
+              <div
+                className="flex h-7 w-7 items-center justify-center border text-[10px] font-bold uppercase tracking-[0.16em]"
+                style={{
+                  borderColor: `${bar.color}66`,
+                  color: bar.color,
+                  background: `${bar.color}16`,
+                }}
+              >
+                {bar.code}
+              </div>
+              <span className="text-white/82">{bar.label}</span>
             </div>
-            <span className="font-mono text-xs text-white/60">{bar.value}%</span>
+            <span className="font-mono text-xs text-white/55">{bar.value}%</span>
           </div>
+
           <div className="status-bar">
             <div
               className="status-fill"
               style={{
                 width: `${bar.value}%`,
-                background: bar.color,
+                background: `linear-gradient(90deg, ${bar.color}, ${bar.color}CC)`,
               }}
             />
           </div>
